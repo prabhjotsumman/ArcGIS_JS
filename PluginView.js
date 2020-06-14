@@ -10,12 +10,16 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
     var view = new MapView({
       container: "viewDiv",
       map: map,
-      center: [-0.12652, 51.51005], //london
+      center: [-113.93518, 51.18236], //Rocky View CA
       zoom: 13,
     });
 
     // Add Search widget
     //1. Search By Intersection
+    // Example: Find a simple street intersection (W Park Ave and Tennessee St, Redlands, CA)
+    //  In this searchWidget, we can directly enter the:
+    // firstRoad and second Road
+    // with "and" in between and it will show you the intersection
     var searchByIntersection = new Search({
       view: view,
     });
@@ -29,6 +33,11 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
     // Find address
     view.on("click", function (evt) {
       searchByIntersection.clear();
+       searchByRoadName.clear();
+        searchByLegalDesc.clear();
+        searchByMuncipalAddress.clear();
+        searchByOwner.clear();
+        searchByRoll.clear();
       view.popup.clear();
       if (searchByIntersection.activeSource) {
         var geocoder = searchByIntersection.activeSource.locator; // World geocode service
@@ -60,27 +69,27 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
     view.ui.add(searchByRoadName, "top-right"); // Add to the map
 
     // Find address
-    view.on("click", function (evt) {
-      searchByRoadName.clear();
-      view.popup.clear();
-      if (searchByRoadName.activeSource) {
-        var geocoder = searchByRoadName.activeSource.locator; // World geocode service
-        var params = {
-          location: evt.mapPoint,
-        };
-        geocoder.locationToAddress(params).then(
-          function (response) {
-            // Show the address found
-            var address = response.address;
-            showPopup(address, evt.mapPoint);
-          },
-          function (err) {
-            // Show no address found
-            showPopup("No address found.", evt.mapPoint);
-          }
-        );
-      }
-    });
+    // view.on("click", function (evt) {
+    //   searchByRoadName.clear();
+    //   view.popup.clear();
+    //   if (searchByRoadName.activeSource) {
+    //     var geocoder = searchByRoadName.activeSource.locator; // World geocode service
+    //     var params = {
+    //       location: evt.mapPoint,
+    //     };
+    //     geocoder.locationToAddress(params).then(
+    //       function (response) {
+    //         // Show the address found
+    //         var address = response.address;
+    //         showPopup(address, evt.mapPoint);
+    //       },
+    //       function (err) {
+    //         // Show no address found
+    //         showPopup("No address found.", evt.mapPoint);
+    //       }
+    //     );
+    //   }
+    // });
     //3. Search By Legal Desc
     var searchByLegalDesc = new Search({
       view: view,
@@ -92,27 +101,27 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
 
     view.ui.add(searchByLegalDesc, "top-right"); // Add to the map
     // Find address
-    view.on("click", function (evt) {
-      searchByLegalDesc.clear();
-      view.popup.clear();
-      if (searchByLegalDesc.activeSource) {
-        var geocoder = searchByLegalDesc.activeSource.locator; // World geocode service
-        var params = {
-          location: evt.mapPoint,
-        };
-        geocoder.locationToAddress(params).then(
-          function (response) {
-            // Show the address found
-            var address = response.address;
-            showPopup(address, evt.mapPoint);
-          },
-          function (err) {
-            // Show no address found
-            showPopup("No address found.", evt.mapPoint);
-          }
-        );
-      }
-    });
+    // view.on("click", function (evt) {
+    //   searchByLegalDesc.clear();
+    //   view.popup.clear();
+    //   if (searchByLegalDesc.activeSource) {
+    //     var geocoder = searchByLegalDesc.activeSource.locator; // World geocode service
+    //     var params = {
+    //       location: evt.mapPoint,
+    //     };
+    //     geocoder.locationToAddress(params).then(
+    //       function (response) {
+    //         // Show the address found
+    //         var address = response.address;
+    //         showPopup(address, evt.mapPoint);
+    //       },
+    //       function (err) {
+    //         // Show no address found
+    //         showPopup("No address found.", evt.mapPoint);
+    //       }
+    //     );
+    //   }
+    // });
     //4. Search By Municipal Address
     var searchByMuncipalAddress = new Search({
       view: view,
@@ -124,27 +133,27 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
 
     view.ui.add(searchByMuncipalAddress, "top-right"); // Add to the map
     // Find address
-    view.on("click", function (evt) {
-      searchByMuncipalAddress.clear();
-      view.popup.clear();
-      if (searchByMuncipalAddress.activeSource) {
-        var geocoder = searchByMuncipalAddress.activeSource.locator; // World geocode service
-        var params = {
-          location: evt.mapPoint,
-        };
-        geocoder.locationToAddress(params).then(
-          function (response) {
-            // Show the address found
-            var address = response.address;
-            showPopup(address, evt.mapPoint);
-          },
-          function (err) {
-            // Show no address found
-            showPopup("No address found.", evt.mapPoint);
-          }
-        );
-      }
-    });
+    // view.on("click", function (evt) {
+    //   searchByMuncipalAddress.clear();
+    //   view.popup.clear();
+    //   if (searchByMuncipalAddress.activeSource) {
+    //     var geocoder = searchByMuncipalAddress.activeSource.locator; // World geocode service
+    //     var params = {
+    //       location: evt.mapPoint,
+    //     };
+    //     geocoder.locationToAddress(params).then(
+    //       function (response) {
+    //         // Show the address found
+    //         var address = response.address;
+    //         showPopup(address, evt.mapPoint);
+    //       },
+    //       function (err) {
+    //         // Show no address found
+    //         showPopup("No address found.", evt.mapPoint);
+    //       }
+    //     );
+    //   }
+    // });
     //5. Search By Owner
     var searchByOwner = new Search({
       view: view,
@@ -156,27 +165,27 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
 
     view.ui.add(searchByOwner, "top-right"); // Add to the map
     // Find address
-    view.on("click", function (evt) {
-      searchByOwner.clear();
-      view.popup.clear();
-      if (searchByOwner.activeSource) {
-        var geocoder = searchByOwner.activeSource.locator; // World geocode service
-        var params = {
-          location: evt.mapPoint,
-        };
-        geocoder.locationToAddress(params).then(
-          function (response) {
-            // Show the address found
-            var address = response.address;
-            showPopup(address, evt.mapPoint);
-          },
-          function (err) {
-            // Show no address found
-            showPopup("No address found.", evt.mapPoint);
-          }
-        );
-      }
-    });
+    // view.on("click", function (evt) {
+    //   searchByOwner.clear();
+    //   view.popup.clear();
+    //   if (searchByOwner.activeSource) {
+    //     var geocoder = searchByOwner.activeSource.locator; // World geocode service
+    //     var params = {
+    //       location: evt.mapPoint,
+    //     };
+    //     geocoder.locationToAddress(params).then(
+    //       function (response) {
+    //         // Show the address found
+    //         var address = response.address;
+    //         showPopup(address, evt.mapPoint);
+    //       },
+    //       function (err) {
+    //         // Show no address found
+    //         showPopup("No address found.", evt.mapPoint);
+    //       }
+    //     );
+    //   }
+    // });
     //6. Search By Roll
     var searchByRoll = new Search({
       view: view,
@@ -188,27 +197,27 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
 
     view.ui.add(searchByRoll, "top-right"); // Add to the map
     // Find address
-    view.on("click", function (evt) {
-      searchByRoll.clear();
-      view.popup.clear();
-      if (searchByRoll.activeSource) {
-        var geocoder = searchByRoll.activeSource.locator; // World geocode service
-        var params = {
-          location: evt.mapPoint,
-        };
-        geocoder.locationToAddress(params).then(
-          function (response) {
-            // Show the address found
-            var address = response.address;
-            showPopup(address, evt.mapPoint);
-          },
-          function (err) {
-            // Show no address found
-            showPopup("No address found.", evt.mapPoint);
-          }
-        );
-      }
-    });
+    // view.on("click", function (evt) {
+    //   searchByRoll.clear();
+    //   view.popup.clear();
+    //   if (searchByRoll.activeSource) {
+    //     var geocoder = searchByRoll.activeSource.locator; // World geocode service
+    //     var params = {
+    //       location: evt.mapPoint,
+    //     };
+    //     geocoder.locationToAddress(params).then(
+    //       function (response) {
+    //         // Show the address found
+    //         var address = response.address;
+    //         showPopup(address, evt.mapPoint);
+    //       },
+    //       function (err) {
+    //         // Show no address found
+    //         showPopup("No address found.", evt.mapPoint);
+    //       }
+    //     );
+    //   }
+    // });
 
     function showPopup(address, pt) {
       view.popup.open({
@@ -220,4 +229,13 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
         location: pt,
       });
     }
+
+    // function clearSearchBox(name) {
+    //   searchByIntersection.clear();
+    //   searchByRoadName.clear();
+    //   searchByLegalDesc.clear();
+    //   searchByMuncipalAddress.clear();
+    //   searchByOwner.clear();
+    //   searchByRoll.clear();
+    // }
   });
