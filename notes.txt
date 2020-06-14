@@ -1,0 +1,145 @@
+
+Search by Intersection
+Search for intersections
+For street intersection matches, Addr_type=StreetInt
+Example: Find a simple street intersection (W Park Ave and Tennessee St, Redlands, CA)
+http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=pjson&outFields=Addr_type&forStorage=false&SingleLine=W%20Park%20Ave%20and%20Tennessee%20St%2C%20Redlands%2C%20CA
+{
+ "spatialReference": {
+  "wkid": 4326,
+  "latestWkid": 4326
+ },
+ "candidates": [
+  {
+   "address": "W Park Ave & Tennessee St, Redlands, California, 92373",
+   "location": {
+    "x": -117.200079,
+    "y": 34.059230999999997
+   },
+   "score": 100,
+   "attributes": {
+    "Addr_type": "StreetInt"
+   },
+   "extent": {
+    "xmin": -117.20107900000001,
+    "ymin": 34.058230999999999,
+    "xmax": -117.199079,
+    "ymax": 34.060230999999995
+   }
+  }
+ ]
+}
+
+Search by Road Name
+Search for street addresses
+
+
+Example: Find a street address (380 New York Street, Redlands, CA 92373)
+"http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=380%20New%20York%20Street%2C%20Redlands%2C%20CA%2092373&category=&outFields=*&forStorage=false&f=pjson"
+
+{
+ "spatialReference": {
+  "wkid": 4326,
+  "latestWkid": 4326
+ },
+ "candidates": [
+  {
+   "address": "380 New York St, Redlands, California, 92373",
+   "location": {
+    "x": -117.1956764921524,
+    "y": 34.057229228143569
+   },
+   "score": 100,
+   "attributes": {
+    "Loc_name": "World",
+    "Status": "M",
+    "Score": 100,
+    "Match_addr": "380 New York St, Redlands, California, 92373",
+    "LongLabel": "380 New York St, Redlands, CA, 92373, USA",
+    "ShortLabel": "380 New York St",
+    "Addr_type": "PointAddress",
+    "Type": "",
+    "PlaceName": "",
+    "Place_addr": "380 New York St, Redlands, California, 92373",
+    "Phone": "",
+    "URL": "",
+    "Rank": 20,
+    "AddBldg": "",
+    "AddNum": "380",
+    "AddNumFrom": "",
+    "AddNumTo": "",
+    "AddRange": "",
+    "Side": "",
+    "StPreDir": "",
+    "StPreType": "",
+    "StName": "New York",
+    "StType": "St",
+    "StDir": "",
+    "BldgType": "",
+    "BldgName": "",
+    "LevelType": "",
+    "LevelName": "",
+    "UnitType": "",
+    "UnitName": "",
+    "SubAddr": "",
+    "StAddr": "380 New York St",
+    "Block": "",
+    "Sector": "",
+    "Nbrhd": "",
+    "District": "",
+    "City": "Redlands",
+    "MetroArea": "",
+    "Subregion": "San Bernardino County",
+    "Region": "California",
+    "RegionAbbr": "CA",
+    "Territory": "",
+    "Zone": "",
+    "Postal": "92373",
+    "PostalExt": "8118",
+    "Country": "USA",
+    "LangCode": "ENG",
+    "Distance": 0,
+    "X": -117.1956764921524,
+    "Y": 34.057229228143569,
+    "DisplayX": -117.1948725,
+    "DisplayY": 34.057232999999997,
+    "Xmin": -117.19587250000001,
+    "Xmax": -117.1938725,
+    "Ymin": 34.056232999999999,
+    "Ymax": 34.058232999999994,
+    "ExInfo": ""
+   },
+   "extent": {
+    "xmin": -117.19587250000001,
+    "ymin": 34.056232999999999,
+    "xmax": -117.1938725,
+    "ymax": 34.058232999999994
+   }
+  }
+ ]
+}
+
+
+Search by Legal Desc
+
+
+Search by Mincupal Address
+Search for administrative place-names
+Example: Find a city name (London)
+
+Single-field request URL
+
+http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=London&forStorage=false&f=pjson
+
+
+Search by Owner
+Example: Find a business name (Starbucks Sydney, AUS)
+http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=starbucks%20sydney%20AUS&outFields=type%2Ccity%2Cregion&maxLocations=1&forStorage=false&f=pjson
+
+
+Search by Roll
+
+RequestURL
+"http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?<PARAMETERS>"
+
+sourceCountry= CA or CAN 
