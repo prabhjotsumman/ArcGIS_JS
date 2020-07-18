@@ -1,76 +1,128 @@
+var _view;
 require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
   Map,
   MapView,
-  Search,
+  Search
 ) {
-    var map = new Map({
-      basemap: "topo-vector",
+  var map = new Map({
+    basemap: "topo-vector",
+  });
+
+  var view = new MapView({
+    container: "viewDiv",
+    map: map,
+    center: [-113.93518, 51.18236], //Rocky View CA
+    zoom: 13,
+  });
+  _view = view;
+  // Add Search widget
+  //1. Search By Intersection
+  // Example: Find a simple street intersection (W Park Ave and Tennessee St, Redlands, CA)
+  //  In this searchWidget, we can directly enter the:
+  // firstRoad and second Road
+  // with "and" in between and it will show you the intersection
+  var searchByIntersection = new Search({
+    view: view,
+  });
+
+  searchByIntersection.watch("activeSource", function (evt) {
+    evt.placeholder = "search by Intersection";
+  });
+
+  view.ui.add(searchByIntersection, "top-right"); // Add to the map
+
+  // Find address when a user click anywhere on the map
+  view.on("click", function (evt) {
+    view.popup.clear();
+    if (searchByIntersection.activeSource) {
+      var geocoder = searchByIntersection.activeSource.locator; // World geocode service
+      var params = {
+        location: evt.mapPoint,
+      };
+      geocoder.locationToAddress(params).then(
+        function (response) {
+          var address = response.address;
+          showPopup(address, evt.mapPoint);
+        },
+        function (err) {
+          showPopup("No address found.", evt.mapPoint);
+        }
+      );
+    }
+  });
+
+  function showPopup(address, pt) {
+    console.log(address, pt.longitude, pt.latitude);
+    view.popup.open({
+      title:
+        +Math.round(pt.longitude * 100000) / 100000 +
+        ", " +
+        Math.round(pt.latitude * 100000) / 100000,
+      content: address,
+      // location: pt,
     });
+  }
+});
+// https://developers.arcgis.com/rest/geocode/api-reference/geocoding-find-address-candidates.htm
 
-    var view = new MapView({
-      container: "viewDiv",
-      map: map,
-      center: [-113.93518, 51.18236], //Rocky View CA
-      zoom: 13,
-    });
+// function SearchByIntersection(address) {
+//   axios
+//     .get(
+//       "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=pjson&outFields=Addr_type&forStorage=false&SingleLine=W%20Park%20Ave%20and%20Tennessee%20St%2C%20Redlands%2C%20CA"
+//     )
+//     .then((response) => {
+//       const users = response.data.data;
+//       console.log(`GET list users`, users);
+//     })
+//     .catch((error) => console.error(error));
+// }
 
-    // Add Search widget
-    //1. Search By Intersection
-    // Example: Find a simple street intersection (W Park Ave and Tennessee St, Redlands, CA)
-    //  In this searchWidget, we can directly enter the:
-    // firstRoad and second Road
-    // with "and" in between and it will show you the intersection
-    var searchByIntersection = new Search({
-      view: view,
-    });
+let coll = document.getElementsByClassName("collapsible");
 
-    searchByIntersection.watch("activeSource", function (evt) {
-      evt.placeholder = "search by Intersection";
-    });
+function collapseAll() {
+  let options = document.querySelectorAll(".collapsible.active");
+  for (let i = 0; i < options.length; i++) {
+    options[i].classList.remove("active");
+    let content = options[i].nextElementSibling;
+    if (content.style.maxHeight) {
+      content.style.maxHeight = null;
+    }
+  }
+}
 
-    view.ui.add(searchByIntersection, "top-right"); // Add to the map
+window.onload = () => {
+  for (let i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function () {
+      collapseAll();
 
-    // Find address
-    view.on("click", function (evt) {
-      view.popup.clear();
-      if (searchByIntersection.activeSource) {
-        var geocoder = searchByIntersection.activeSource.locator; // World geocode service
-        var params = {
-          location: evt.mapPoint,
-        };
-        geocoder.locationToAddress(params).then(
-          function (response) {
-            // Show the address found
-            var address = response.address;
-            showPopup(address, evt.mapPoint);
-          },
-          function (err) {
-            // Show no address found
-            showPopup("No address found.", evt.mapPoint);
-          }
-        );
+      let classList = this.classList;
+      let content = this.nextElementSibling;
+
+      classList.toggle("active");
+
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
       }
     });
-    //2. Search By Road Name
-    var searchByRoadName = new Search({
-      view: view,
-    });
+  }
+};
 
-    searchByRoadName.watch("activeSource", function (evt) {
-      evt.placeholder = "search by Road Name";
-    });
+function closeWidget() {
+  console.log("closing...");
+}
+function search() {
+  //HTMLCollection(2) [div.searchInputDiv, div.searchInputDiv]
+  let inputElements = document
+    .querySelector(".collapsible.active")
+    .nextElementSibling.querySelectorAll("input");
 
-    view.ui.add(searchByRoadName, "top-right"); // Add to the map
+  let query = "";
+  for (let i = 0; i < inputElements.length; i++) {
+    // console.log(inputElements[i].value);
+    query += inputElements[i].value + " ";
+  }
+  console.log(query);
 
-    function showPopup(address, pt) {
-      view.popup.open({
-        title:
-          +Math.round(pt.longitude * 100000) / 100000 +
-          ", " +
-          Math.round(pt.latitude * 100000) / 100000,
-        content: address,
-        location: pt,
-      });
-    }
-    
-  });
+}
