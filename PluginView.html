@@ -1,24 +1,113 @@
 <html>
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>ArcGIS JavaScript PlugInView</title>
-<style>
-  html, body, #viewDiv {
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <title>ArcGIS JavaScript PlugInView</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
   <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/light/main.css">
+  <link rel="stylesheet" href="styles.css">
   <script src="https://js.arcgis.com/4.15/"></script>
   <script src="./PluginView.js"></script>
-  <script src="./queryMap.js"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"
-    integrity="sha256-T/f7Sju1ZfNNfBh7skWn0idlCBcI3RwdLSS4/I7NQKQ=" crossorigin="anonymous"></script> -->
+  <script src="queryMap.js"></script>
 </head>
+
 <body>
   <div id="viewDiv"></div>
+  <div class="searchWidgetContainer card">
+    <div class="box-title">Rocky View
+      <div class="btn-close" onclick="closeWidget();"></div>
+    </div>
+    <form onsubmit="search(); return false;">
+      <button class="collapsible" onclick="return false;">Search By Intersection</button>
+      <div class="content">
+        <div class="searchInputDiv">
+          <label for="firstRoad">First Road</label>
+          <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+        </div>
+        <div class="searchInputDiv">
+          <label for="secondRoad">Second Road</label>
+          <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+        </div>
+      </div>
+      <button class="collapsible" onclick="return false;">Search By Road Name</button>
+      <div class="content">
+        <div class="searchInputDiv">
+          <label for="firstRoad">Road Name</label>
+          <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+        </div>
+        <!-- <div class="searchInputDiv">
+                  <label for="secondRoad">Second Road</label>
+                  <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+              </div> -->
+      </div>
+      <button class="collapsible" onclick="return false;">Search By Legal Desc</button>
+      <div class="content">
+        <div class="descInputDiv">
+          <label for="firstRoad">Desc #</label>
+          <input class="input-field desc-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+        </div>
+        <div class="descInputDiv">
+          <label for="secondRoad">Desc #</label>
+          <input class="input-field desc-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+        </div>
+        <div class="descInputDiv">
+          <label for="firstRoad">Desc #</label>
+          <input class="input-field desc-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+        </div>
+        <div class="descInputDiv">
+          <label for="secondRoad">Desc #</label>
+          <input class="input-field desc-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+        </div>
+      </div>
+      <button class="collapsible" onclick="return false;">Search By Municipal Address</button>
+      <div class="content">
+        <div class="searchInputDiv">
+          <label for="firstRoad">Enter Muncipal address</label>
+          <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+        </div>
+        <!-- <div class="searchInputDiv">
+                  <label for="secondRoad">Second Road</label>
+                  <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+              </div> -->
+      </div>
+      <button class="collapsible" onclick="return false;">Search By Owner</button>
+      <div class="content">
+        <div class="searchInputDiv">
+          <label for="firstRoad">Owner Name</label>
+          <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+        </div>
+        <!-- <div class="searchInputDiv">
+                  <label for="secondRoad">Second Road</label>
+                  <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+              </div> -->
+      </div>
+      <button class="collapsible" onclick="return false;">Search By Roll</button>
+      <div class="content">
+        <div class="searchInputDiv">
+          <label for="firstRoad">Enter Roll</label>
+          <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+        </div>
+        <!-- <div class="searchInputDiv">
+                  <label for="secondRoad">Second Road</label>
+                  <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+              </div> -->
+      </div>
+      <div class="search-btn-div">
+        <button class="btn-search" id="searchButton" role="submit" type="submit">Search</button>
+      </div>
+    </form>
+  </div>
 </body>
-</html> 
+
+</html>

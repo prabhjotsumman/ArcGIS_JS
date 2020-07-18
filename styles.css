@@ -1,0 +1,122 @@
+body {
+  font-family: "Roboto", sans-serif;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.box-title {
+  background-color: #dadada;
+  color: black;
+  padding: 4px;
+  font-weight: 700;
+  padding-left: 5px;
+  font-style: normal;
+  border-bottom: 2px solid #949494;
+  font-size: 15px;
+}
+
+.box-title:before {
+  content: " \2742";
+  color: #ff8f3e;
+  padding-right: 4px;
+}
+
+.btn-close:after {
+  content: " \2573";
+  color: white;
+  float: right;
+  background: #ff0000a3;
+  padding: 0px 4px;
+  font-size: 11px;
+  margin-right: 5px;
+}
+
+.collapsible {
+  background-color: #dadada;
+  color: black;
+  cursor: pointer;
+  padding: 4px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  /* font-size: 15px; */
+  font-style: italic;
+}
+
+.active,
+.collapsible:hover {
+  background-color: #cfd6fa;
+}
+
+.collapsible:before {
+  content: "\02C3";
+  color: black;
+  font-weight: bold;
+  float: left;
+  margin: 0px 5px;
+  margin-right: 10px;
+}
+
+.active:before {
+  content: "\02C5";
+}
+
+.content {
+  padding: 0px 8px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+
+.searchInputDiv {
+  max-width: 140px;
+  text-align: center;
+  display: inline-block;
+}
+
+.descInputDiv {
+  max-width: 66px;
+  text-align: center;
+  display: inline-block;
+}
+
+.searchWidgetContainer {
+  max-width: 300px;
+  right: 2%;
+  position: absolute;
+  background-color: #dadada;
+  top: 15%;
+}
+
+.input-field {
+  max-width: 130px;
+}
+
+.desc-field {
+  max-width: 60px;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
+  transition: 0.3s;
+  z-index: 1;
+}
+
+.search-btn-div {
+  text-align: center;
+  padding: 5px;
+  border-top: 1px solid #c6c6c6;
+  background-color: #dadada;
+}
+
+.btn-search {
+  min-width: 150px;
+  padding: 5px;
+}
+
+.btn-close {
+  display: inline-block;
+  float: right;
+}

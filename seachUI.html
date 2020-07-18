@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        .box-title {
+            background-color: #dadada;
+            color: black;
+            padding: 4px;
+            font-weight: 700;
+            padding-left: 5px;
+            font-style: normal;
+            border-bottom: 2px solid #949494;
+            font-size: 15px;
+        }
+
+        .box-title:before {
+            content: ' \2742';
+            color: #ff8f3e;
+            padding-right: 4px;
+        }
+
+        .btn-close:after {
+            content: ' \2573';
+            color: white;
+            float: right;
+            background: #ff0000a3;
+            padding: 0px 4px;
+            font-size: 11px;
+            margin-right: 5px;
+        }
+
+        .collapsible {
+            background-color: #dadada;
+            color: black;
+            cursor: pointer;
+            padding: 4px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            /* font-size: 15px; */
+            font-style: italic;
+        }
+
+        .active,
+        .collapsible:hover {
+            background-color: #cfd6fa;
+        }
+
+        .collapsible:before {
+            content: '\02C3';
+            color: black;
+            font-weight: bold;
+            float: left;
+            margin: 0px 5px;
+            margin-right: 10px;
+        }
+
+        .active:before {
+            content: "\02C5";
+        }
+
+        .content {
+            padding: 0px 8px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            background-color: #f1f1f1;
+        }
+
+        .searchInputDiv {
+            max-width: 140px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .descInputDiv {
+            max-width: 66px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .searchWidgetContainer {
+            max-width: 300px;
+        }
+
+        .input-field {
+            max-width: 130px;
+        }
+
+        .desc-field {
+            max-width: 60px;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
+            transition: 0.3s;
+            z-index: 1;
+        }
+
+        .search-btn-div {
+            text-align: center;
+            padding: 5px;
+            border-top: 1px solid #c6c6c6;
+            background-color: #dadada;
+        }
+
+        .btn-search {
+            min-width: 150px;
+            padding: 5px;
+        }
+
+        .btn-close {
+            /* display: inline-block; */
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="searchWidgetContainer card">
+        <div class="box-title">Rocky View
+            <div class="btn-close" onclick="closeWidget();"></div>
+        </div>
+        <form onsubmit="search(); return false;">
+            <button class="collapsible" onclick="return false;">Search By Intersection</button>
+            <div class="content">
+                <div class="searchInputDiv">
+                    <label for="firstRoad">First Road</label>
+                    <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+                </div>
+                <div class="searchInputDiv">
+                    <label for="secondRoad">Second Road</label>
+                    <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+                </div>
+            </div>
+            <button class="collapsible" onclick="return false;">Search By Road Name</button>
+            <div class="content">
+                <div class="searchInputDiv">
+                    <label for="firstRoad">Road Name</label>
+                    <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+                </div>
+                <!-- <div class="searchInputDiv">
+                <label for="secondRoad">Second Road</label>
+                <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+            </div> -->
+            </div>
+            <button class="collapsible" onclick="return false;">Search By Legal Desc</button>
+            <div class="content">
+                <div class="descInputDiv">
+                    <label for="firstRoad">Desc #</label>
+                    <input class="input-field desc-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+                </div>
+                <div class="descInputDiv">
+                    <label for="secondRoad">Desc #</label>
+                    <input class="input-field desc-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+                </div>
+                <div class="descInputDiv">
+                    <label for="firstRoad">Desc #</label>
+                    <input class="input-field desc-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+                </div>
+                <div class="descInputDiv">
+                    <label for="secondRoad">Desc #</label>
+                    <input class="input-field desc-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+                </div>
+            </div>
+            <button class="collapsible" onclick="return false;">Search By Municipal Address</button>
+            <div class="content">
+                <div class="searchInputDiv">
+                    <label for="firstRoad">Enter Muncipal address</label>
+                    <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+                </div>
+                <!-- <div class="searchInputDiv">
+                <label for="secondRoad">Second Road</label>
+                <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+            </div> -->
+            </div>
+            <button class="collapsible" onclick="return false;">Search By Owner</button>
+            <div class="content">
+                <div class="searchInputDiv">
+                    <label for="firstRoad">Owner Name</label>
+                    <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+                </div>
+                <!-- <div class="searchInputDiv">
+                <label for="secondRoad">Second Road</label>
+                <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+            </div> -->
+            </div>
+            <button class="collapsible" onclick="return false;">Search By Roll</button>
+            <div class="content">
+                <div class="searchInputDiv">
+                    <label for="firstRoad">Enter Roll</label>
+                    <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+                </div>
+                <!-- <div class="searchInputDiv">
+                <label for="secondRoad">Second Road</label>
+                <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+            </div> -->
+            </div>
+            <div class="search-btn-div">
+                <button class="btn-search" id="searchButton" role="submit" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let coll = document.getElementsByClassName("collapsible");
+
+        function collapseAll() {
+            let options = document.querySelectorAll(".collapsible.active");
+            for (let i = 0; i < options.length; i++) {
+                options[i].classList.remove("active");
+                let content = options[i].nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                }
+            }
+        }
+        for (let i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                collapseAll();
+
+                let classList = this.classList;
+                let content = this.nextElementSibling;
+
+                classList.toggle("active");
+
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        function closeWidget() {
+            console.log("closing...")
+        }
+        function search(e) {
+            //HTMLCollection(2) [div.searchInputDiv, div.searchInputDiv]
+            let inputElements = document.querySelector(".collapsible.active").nextElementSibling.querySelectorAll("input");
+
+            let query = "";
+            for(let i=0;i<inputElements.length;i++){
+                // console.log(inputElements[i].value);
+                query += inputElements[i].value + " ";
+            }
+            console.log(query);
+        }
+    </script>
+</body>
+</html>
