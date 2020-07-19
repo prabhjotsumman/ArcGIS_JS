@@ -113,7 +113,15 @@ window.onload = () => {
       }
     });
   }
-  // dragElement(document.getElementById("searchWidgetDiv"));
+  dragElement(document.getElementById("searchWidgetDiv"));
+  
+  let inputElements = document.querySelectorAll(".input-field");
+  
+  for(let i=0;i<inputElements.length;i++){
+    inputElements[i].onclick = function (e) {
+      this.focus();
+    };
+  }
 };
 
 function closeWidget() {
