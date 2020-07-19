@@ -1,4 +1,6 @@
 var _view;
+var _esriSearchWidget;
+var _showPopup;
 require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
   Map,
   MapView,
@@ -21,21 +23,24 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
   //  In this searchWidget, we can directly enter the:
   // firstRoad and second Road
   // with "and" in between and it will show you the intersection
-  var searchByIntersection = new Search({
+  var esriSearchWidget = new Search({
     view: view,
+    map
   });
 
-  searchByIntersection.watch("activeSource", function (evt) {
+  esriSearchWidget.watch("activeSource", function (evt) {
     evt.placeholder = "search by Intersection";
   });
 
-  view.ui.add(searchByIntersection, "top-right"); // Add to the map
+  _esriSearchWidget = esriSearchWidget;
+  
+  view.ui.add(esriSearchWidget, "top-right"); // Add to the map
 
   // Find address when a user click anywhere on the map
   view.on("click", function (evt) {
     view.popup.clear();
-    if (searchByIntersection.activeSource) {
-      var geocoder = searchByIntersection.activeSource.locator; // World geocode service
+    if (esriSearchWidget.activeSource) {
+      var geocoder = esriSearchWidget.activeSource.locator; // World geocode service
       var params = {
         location: evt.mapPoint,
       };
@@ -62,6 +67,7 @@ require(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], function (
       // location: pt,
     });
   }
+  _showPopup = showPopup;
 });
 // https://developers.arcgis.com/rest/geocode/api-reference/geocoding-find-address-candidates.htm
 
@@ -107,7 +113,7 @@ window.onload = () => {
       }
     });
   }
-  dragElement(document.getElementById("searchWidgetDiv"));
+  // dragElement(document.getElementById("searchWidgetDiv"));
 };
 
 function closeWidget() {
@@ -119,17 +125,25 @@ function toggetCustomSearchWidget() {
 }
 function search() {
   //HTMLCollection(2) [div.searchInputDiv, div.searchInputDiv]
-  let inputElements = document
-    .querySelector(".collapsible.active")
-    .nextElementSibling.querySelectorAll("input");
+  let inputElements = document.querySelector(".collapsible.active");
+  
+  let inputs = (inputElements && inputElements.nextElementSibling.querySelectorAll("input")) || [];
 
   let query = "";
-  for (let i = 0; i < inputElements.length; i++) {
-    // console.log(inputElements[i].value);
-    query += inputElements[i].value + " ";
+  for (let i = 0; i < inputs.length; i++) {
+    // console.log(inputs[i].value);
+    query += inputs[i].value + " ";
   }
   console.log(query);
+  searchQueryInEsriWidget(query);
+}
 
+function searchQueryInEsriWidget(query){
+  if (query.length) {
+    _esriSearchWidget.focus();
+    _esriSearchWidget.searchTerm = query;
+    _esriSearchWidget.search();
+  }
 }
 
 function dragElement(elmnt) {
