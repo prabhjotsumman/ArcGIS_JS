@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Cityworks Plugin Map Tool Tutorial</title>
+    <link rel="stylesheet" href="../content/css/plugin-main.css" type="text/css" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700italic,700' rel='stylesheet' type='text/css'>
+    <script src="../libraries/highlightjs/highlight.pack.js"></script>
+    <link rel="stylesheet" href="../libraries/highlightjs/styles/default.css" type="text/css" />
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+    <div class="main-center-panel pad-md">
+        <h2>Cityworks Plugin Map Tool Tutorial</h2>
+        <p>
+            Cityworks provides a way for third parties to create their own map tools and include them in the Cityworks map in various plugins.
+        </p>
+        <p>
+            Map tools are written in Typescript and follow the Esri Widget development model. The Cityworks Plugin map utilizes the 4.x version of the Esri JS API.
+            For more information on the Esri JS API Widget development please see the <a href="https://developers.arcgis.com/javascript/latest/guide/custom-widget/index.html" target="_blank">Esri JS API documentation</a>.
+            There are a few additional requirements and limitations for the map tool to work with the Cityworks map and framework.
+        </p>
+        <div class="mg-top-lg">
+            <h3>Creating a Map Tool</h3>
+            <a href="#step1">Widget Properties</a>
+			<br />
+            <a href="#step2">Map Tool Config</a>
+            <br />
+            <a href="#step3">String Customization</a>
+            <br />
+            <a href="#step4">Styling</a>
+            <br />
+            <h3>Deploying a Map Tool</h3>
+            <a href="#step5">Building the Map Tool</a>
+            <br />
+            <a href="#step6">Installing the Map Tool</a>
+            <br />
+            <br />
+            <br />
+            <a href="map-tool-template.zip">Download a map tool template</a>
+        </div>
+        <div class="mg-top-lg">
+            <h2>Creating a Map Tool</h2>
+        </div>
+        <div class="mg-top-lg" id="step1">
+            <h3>Widget Properties</h3>
+            <p>
+                Esri widgets allow the developer to set properties on the widget and have them passed to the constructor. The Cityworks map framework doesn't know the possible properties and their types for any single widget. To provide the developer with access to the map objects they may need, the Cityworks map will pass a helper class as a property. The helper class is imported from the map and the property must be named mapHelper.
+                <br />
+                <br />
+                <pre class="code">
+                    <code class="js">
+import { ICwMapHelper } from "./typings/cw-map-helper";
+                    </code>
+                </pre>
+                <pre class="code">
+                    <code class="js">
+@property()
+mapHelper: ICwMapHelper = null;
+                    </code>
+                </pre>
+                <br />
+                <br />
+                The second property the Cityworks map framework will pass is the layout. This property is an object that contains the layouts defined for the map tool and their customized strings. 
+                <br />
+                <br />
+                <pre class="code">
+                    <code class="js">
+@property()
+layout: { [layout: string]: { strings: { [key: string]: string } } } = null;
+                    </code>
+                </pre>
+                <br />
+                <br />
+                The third property the Cityworks map framework will pass is the base path for the map tool. This path is needed if you want to load css files into your tool.
+                <br />
+                <br />
+                <pre class="code">
+                    <code class="js">
+@property()
+basePath: string = null;
+                    </code>
+                </pre>
+                <br />
+                <br />
+                Another important property is the iconClass property. This is the CSS class for the icon that Esri will display when the widget is collapsed in the expand panel.
+                <br />
+                <br />
+                <pre class="code">
+                    <code class="js">
+@property()
+iconClass = 'esri-icon-dashboard';
+                    </code>
+                </pre>
+                <br />
+                <br />
+            </p>
+        </div>
+        <div class="mg-top-lg" id="step2">
+            <h3>Map Tool Config</h3>
+            <p>
+                Similar to Cityworks plugin development, a config file is used by the framework for deployment and configuration of the map tool. The config file is JSON and must be named map-tool-config.json.
+                <br />
+                <br />
+                <pre class="code">
+                    <code class="json">
+{
+    "EntryPoint": "my-tool.js",
+	"IsBuiltIn": false,
+    "Name": "My Tool",
+	"Supports2d": true,
+	"Supports3d": false,
+	"Uid": "24084b3eccadbc89c9da1f975dc742355b738175b2d98d43",
+	"Version": "1.0.0"
+}
+                    </code>
+                </pre>
+                <br />
+                <br />
+                <ul>
+                    <li>The EntryPoint is a relative path to the entry point for the map tool. This will most likely be the JS file that was transpiled from the .tsx file written in the Esri Widget format.</li>
+					<li>IsBuiltIn should be false.</li>
+                    <li>The Name is the user friendly name of the map tool.</li>
+                    <li>Supports2d is whether the map tool will work in a 2d MapView. The map currently only supports a 2d MapView so this field should be true.</li>
+                    <li>Supports3d is whether the map tool will work in a 3d SceneView. The map does not currently support a 3d SceneView yet so this field won't affect anything yet.</li>
+                    <li>The UID is a 24-byte sequence encoded as a hexadecimal string. This value must be unique for each map tool. A site like <a href="https://www.random.org/bytes/" target="_blank">random.org</a> can be used to generate this if needed.</li>
+                    <li>The Version is a SemVer style version number for the map tool.</li>
+                </ul>
+            </p>
+        </div>
+        <div class="mg-top-lg" id="step3">
+                <h3>String Customization</h3>
+                <br />
+                <br />
+                <h4>Default Profile</h4>
+                <p>
+                    Customization of the strings in a map tool will be done with Style. For the map tool to be able to work with Style a default profile must be created. The file must be named default.pcp.json and placed in a folder called profiles.
+                    <br />
+                    <br />
+                    <pre class="code">
+                        <code class="json">
+{
+  "isBuiltIn": true,
+  "name": "default",
+  "pluginName": "MyTool",
+  "pluginUid": "24084b3eccadbc89c9da1f975dc742355b738175b2d98d43",
+  "pluginVersion": "1.0.0",
+  "layouts": {
+    "MyTool": {
+      "strings": {
+        "hello": "world"
+      }
+    }
+  }
+}
+                        </code>
+                    </pre>
+                    <br />
+                    <br />
+                    <ul>
+                        <li>isBuiltIn should be true since this is the default profile.</li>
+                        <li>The name should be default.</li>
+                        <li>The pluginName, pluginUid, and pluginVersion properties should match those from the map tool config file.</li>
+                    </ul>
+                </p>
+                <h4>Plugin Definition</h4>
+                <p>
+                    In order for Style to be able to work with the strings in the default profile, a plugin definition needs to be in the root folder of the tool. The file must be named layout.pcd.json.
+                    <br />
+                    <br />
+                    <pre class="code">
+                        <code class="json">
+{
+  "layouts": {
+    "MyTool": {
+      "childLayouts": [],
+      "label": "MyTool",
+      "controls": {},
+      "relatedStringKeys": [
+        "hello"
+      ]
+    }
+  }
+}
+                        </code>
+                </p>
+            </div>
+            <div class="mg-top-lg" id="step4">
+                <h3>Styling</h3>
+                <p>
+                    Styling can be done directly in the .tsx file or in a separate .css file. The basePath property should be used in importing the css file is a separate one is used.
+                    <br />
+                    <br />
+                </p>
+            </div>
+        <div class="mg-top-lg">
+            <h2>Deploying a Map Tool</h2>
+        </div>
+        <div class="mg-top-lg" id="step5">
+            <h3>Building the Map Tool</h3>
+            <p>
+            The map tool should be built using the TypeScript compiler.
+            <br />
+            <br />
+            After transpiling the Typescript to a .js file, the files for the map tool need to be packaged together. The following files should be added to a zip file.
+            <br />
+            <br />
+                <ul>
+                    <li>The .js file output by the TypeScript compiler.</li>
+                    <li>The map-tool-config.json file.</li>
+                    <li>The layout.pcd.json file.</li>
+                    <li>The profiles folder containing the default.pcp.json file.</li>
+                    <li>The .css file if styling was done in a separate file.</li>
+                </ul>
+            <br />
+            <br />
+            After the zip file is created it should be renamed to have a .cwmt extension instead of the .zip extension.
+            </p>
+        </div>
+        <div class="mg-top-lg" id="step6">
+                <h3>Installing the Map Tool</h3>
+                <p>
+                Map tools are installed through the Map Tools page in Designer in Cityworks Office.
+                <br />
+                <br />
+                </p>
+            </div>
+    </div>
+</body>
+</html>

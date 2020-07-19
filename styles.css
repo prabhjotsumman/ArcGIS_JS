@@ -84,12 +84,25 @@ body {
 
 .searchWidgetContainer {
   max-width: 300px;
+  min-width: 300px;
   right: 2%;
   position: absolute;
   background-color: #dadada;
   top: 15%;
 }
 
+#openSearchWidgetDiv {
+      right: 2%;
+    position: absolute;
+    background-color: #ffffff;
+    top: 15%;
+    border-radius: 30px;
+    padding: 16px;
+    box-shadow: 2px 2px 3px;
+}
+.search-icon {
+  font-size: 16px;
+}
 .input-field {
   max-width: 130px;
 }
@@ -100,7 +113,7 @@ body {
 
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
-  transition: 0.3s;
+  /* transition: 0.3s; */
   z-index: 1;
 }
 

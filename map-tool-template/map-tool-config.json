@@ -1,0 +1,9 @@
+{
+	"EntryPoint": "template.js",
+	"IsBuiltIn": false,
+	"Name": "Map Tool Template",
+	"Supports2d": true,
+	"Supports3d": false,
+	"Uid": "44085b3eccaabb88c9da5f976dc742754b838375b2e88d32",
+	"Version": "1.0.0"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@cw-map/template",
+  "version": "1.0.0",
+  "description": "Template for Cityworks map tools",
+  "main": "template.js",
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/arcgis-js-api": "^4.11.0",
+    "typescript": "^3.4.1"
+  }
+}

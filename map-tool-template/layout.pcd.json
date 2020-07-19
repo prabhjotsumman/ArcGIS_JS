@@ -1,0 +1,12 @@
+{
+    "layouts": {
+        "MapToolTemplate": {
+            "childLayouts": [],
+            "label": "MapToolTemplate",
+            "controls": {},
+            "relatedStringKeys": [
+                "title"
+            ]
+        }
+    }
+}

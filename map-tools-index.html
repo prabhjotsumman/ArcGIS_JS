@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Cityworks Server Map Tool Tutorial</title>
+    <link rel="stylesheet" href="../content/css/plugin-main.css" type="text/css" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700italic,700' rel='stylesheet' type='text/css'>
+    <script src="../libraries/highlightjs/highlight.pack.js"></script>
+    <link rel="stylesheet" href="../libraries/highlightjs/styles/default.css" type="text/css" />
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+    <div class="main-center-panel pad-md">
+        <h2>Cityworks Server Map Tool Tutorial</h2>
+        <p>
+            Cityworks Server provides a way for third parties to create their own map tools and include them in the Cityworks map.
+        </p>
+        <p>
+            Map tools are written in JavaScript. The Cityworks map utilizes the Esri JS API which is available for use in the map tools.
+            For more information on the Esri JS API please see the <a href="https://developers.arcgis.com/javascript/3/" target="_blank">Esri JS API documentation</a>.
+            <br />
+            <br />
+            Other JavaScript libraries are also available for use, including Dojo and jQuery.
+        </p>
+        <div class="mg-top-lg">
+            <h3>Creating a Map Tool</h3>
+            <a href="#step1">Step 1: Create the JavaScript file</a>
+			<br />
+			<a href="#step1a" class="mg-left-lg">Step 1a: Create the basic structure</a>
+			<br />
+			<a href="#step1b" class="mg-left-lg">Step 1b: Add required functions</a>
+			<br />
+            <a href="#step1c" class="mg-left-lg">Step 1c: Add your code</a>
+			<br />
+			<a href="#step1d" class="mg-left-lg">Step 1d: Add css (optional)</a>
+			<br />
+			<a href="#step1e" class="mg-left-lg">Step 1e: Add layout file (optional)</a>
+            <br />
+            <a href="#step1f" class="mg-left-lg">Step 1f: Map Tool as a Menu (optional)</a>
+            <br />
+            <a href="#step2">Step 2: Create an overriding XML file</a>
+            <br />
+            <a href="#step3">Step 3: Upload the files to the Cityworks site</a>
+            <br />
+            <br />
+            <br />
+            <a href="#ref1">Plugin Proxy reference</a>
+            <br />
+            <br />
+            <a href="#ref2">Updating map tools from Cityworks 2015 and older</a>
+            <br />
+            <br />
+            <a href="sample-code.zip">Download the code from this tutorial</a>
+        </div>
+        <div class="mg-top-lg" id="step1">
+            <h3>Step 1: Create the JavaScript file</h3>
+            <p>
+				Map tools are written in JavaScript.
+                <br /> 
+                <br /> 
+                While JavaScript can be written in any text editor, it is recommended that you use a text editor with good JavaScript support. 
+                <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a> is a light-weight cross-platform program and is a great option for this. 
+            </p>
+        </div>
+		<div class="mg-top-lg" id="step1a">
+			<h3>Step 1a: Create the basic structure</h3>
+            <p>
+                Map tools use Dojo's AMD style module loading. This should be used to load any Dojo and Esri modules that you would like to use in your map tool.
+                <br />
+                <br />
+                Module loading is done through the define function. This function takes 2 arguments: an array of strings of the modules to load, and a function that contains the code where the modules are used.
+                The following example loads the dojo module.
+                <br />
+                <br />
+                <pre class="code">
+                    <code class="js">
+define(["dojo"], function(_dojo){
+
+});
+                    </code>
+                </pre>
+            </p>
+            <p>
+                Map tools need to return a function. This function has 2 arguments: the plugin proxy object, and a config object. The plugin proxy object provides various helper functions that are very useful. 
+                Please see the <a href="#ref1">Plugin Proxy reference</a> for a list of the available functions. The config object contains the map tools id and title.
+                <pre class="code">
+                    <code class="js">
+define(["dojo"], function(_dojo){
+    return function (proxy, cfg) {
+
+    };
+});
+                    </code>
+                </pre>
+            </p>
+		</div>
+        <div class="mg-top-lg" id="step1b">
+			<h3>Step 1b: Add required functions</h3>
+            <p>
+                Map tools have 2 functions that are required by Cityworks. These functions need to be exposed on the function that is being returned. The first one is the init function. 
+                The init function returns a Dojo Deferred. For more information on Dojo Deferreds see the <a href="http://dojotoolkit.org/api/" target="_blank">Dojo Toolkit documentation</a>.
+                This function should include any initialization logic for your map tool. 
+                The Dojo Deferred should get either resolved or rejected depending on whether the initialization logic worked or failed.
+                <br />
+                <br />
+                In the following example we are using the plugin proxy to get a Dojo Deferred.
+                <pre class="code">
+                    <code class="js">
+define(["dojo"], function(_dojo){
+    return function (proxy, cfg) {
+        this.init = function(){
+            var dfd = proxy.utility.deferred();
+            dfd.resolve();
+            return dfd;
+        };
+    };
+});
+                    </code>
+                </pre>
+            </p>
+            <p>
+                The second function is the show function. This function will be called everytime the user opens the map tool from the toolbar.
+                This function should include logic to create and/or show the UI for the map tool. This function does not return anything.
+                <br />
+                <br />
+                In the following example we are create the UI the first time the function is called and just showing it any subsequent times.
+                <pre class="code">
+                    <code class="js">
+define(["dojo"], function(_dojo){
+    return function (proxy, cfg) {
+        var initialized = false;
+
+        this.init = function() {
+            var dfd = proxy.utility.deferred();
+            dfd.resolve();
+            return dfd;
+        };
+
+        this.show = function() {
+            if (!initialized) {
+                //We will create the UI here before showing it
+                initialized = true;
+            } else {
+                //The UI is already created so just show it
+            }
+        };
+    };
+});
+                    </code>
+                </pre>
+            </p>
+		</div>
+        <div class="mg-top-lg" id="step1c">
+			<h3>Step 1c: Add your code</h3>
+            <p>
+                The next step is to add your own code for whatever functionality you want your map tool to provide.
+                <br />
+                <br />
+                For this example, we will have an Esri Locate button in our map tool. The Esri Locate button gets the users current location and zooms the map to that location.
+                Please see the Esri documentation for the <a href="https://developers.arcgis.com/javascript/3/jsapi/locatebutton-amd.html" target="_blank">LocateButton</a> for usage and known limitations.
+                <br />
+                <br />
+                First we will load the Esri LocateButton module into our code.
+                <pre class="code">
+                    <code class="js">
+define(["dojo", "esri/dijit/LocateButton"], function(_dojo, LocateButton){
+    return function (proxy, cfg) {
+        var initialized = false;
+
+        this.init = function() {
+            var dfd = proxy.utility.deferred();
+            dfd.resolve();
+            return dfd;
+        };
+
+        this.show = function() {
+            if (!initialized) {
+                //We will create the UI here before showing it
+                initialized = true;
+            } else {
+                //The UI is already created so just show it
+            }
+        };
+    };
+});
+                    </code>
+                </pre>
+            </p>
+            <p>
+                Next we will add code to generate and show our UI in the show function. The code to generate the UI was added in the initUI function. 
+                This function returns an object containing the title, label, and UI container. The title is taken from the config object.
+                A selectChild function was added that uses a couple of functions from the proxy that expand the region containing the map tools UI and select it.
+                <pre class="code">
+                    <code class="js">
+define(["dojo", "esri/dijit/LocateButton"], function(_dojo, LocateButton){
+    return function (proxy, cfg) {
+        var initialized = false, displayPanel;
+
+        function initUI() {
+            var config = { label: cfg.title, title: cfg.title };
+
+            var container = _dojo.create("div");
+            var button = _dojo.create("button");
+            container.appendChild(button);
+
+            config.content = container;
+
+            return config;
+        };
+
+        function selectChild() {
+            proxy.layout.toggleRegion({ region: "trailing", expanded: true });
+            proxy.layout.selectChild(displayPanel);
+        };
+
+        this.init = function() {
+            var dfd = proxy.utility.deferred();
+            dfd.resolve();
+            return dfd;
+        };
+
+        this.show = function() {
+            if (!initialized) {
+                //We will create the UI here before showing it
+                initialized = true;
+                var uiConfig = initUI();
+                displayPanel = proxy.layout.createTrailingPanel(uiConfig);
+                selectChild();
+            } else {
+                //The UI is already created so just show it
+                selectChild();
+            }
+        };
+    };
+});
+                    </code>
+                </pre>
+            </p>
+            <p>
+                Finally we will hook the Esri LocateButton to our UI button in the initUI function.
+                We will use the proxy.map.get() function from the proxy to get the Esri Map object.
+                <pre class="code">
+                    <code class="js">
+define(["dojo", "esri/dijit/LocateButton"], function(_dojo, LocateButton){
+    return function (proxy, cfg) {
+        var initialized = false, displayPanel;
+
+        function initUI() {
+            var config = { label: cfg.title, title: cfg.title };
+
+            var container = _dojo.create("div");
+            var button = _dojo.create("button");
+            container.appendChild(button);
+
+            var locateButton = new LocateButton({map: proxy.map.get()}, button);
+            locateButton.startup();
+
+            config.content = container;
+
+            return config;
+        };
+
+        function selectChild() {
+            proxy.layout.toggleRegion({ region: "trailing", expanded: true });
+            proxy.layout.selectChild(displayPanel);
+        };
+
+        this.init = function() {
+            var dfd = proxy.utility.deferred();
+            dfd.resolve();
+            return dfd;
+        };
+
+        this.show = function() {
+            if (!initialized) {
+                //We will create the UI here before showing it
+                initialized = true;
+                var uiConfig = initUI();
+                displayPanel = proxy.layout.createTrailingPanel(uiConfig);
+                selectChild();
+            } else {
+                //The UI is already created so just show it
+                selectChild();
+            }
+        };
+    };
+});
+                    </code>
+                </pre>
+            </p>
+		</div>
+        <div class="mg-top-lg" id="step1d">
+			<h3>Step 1d: Add css (optional)</h3>
+            <p>
+                While you can style your UI in the code when you are creating it, you can also add a css file.
+                The proxy has a function for easily adding css files. It is recommended you do this in the init function as shown in the following example.
+                <pre class="code">
+                    <code class="js">
+this.init = function() {
+    var dfd = proxy.utility.deferred();
+    proxy.layout.addCssFile("custom", "css/tutorial.css");
+    dfd.resolve();
+    return dfd;
+};          
+                    </code>
+                </pre>
+             </p>
+		</div>
+        <div class="mg-top-lg" id="step1e">
+			<h3>Step 1e: Add layout file (optional)</h3>
+            <p>
+                Plugin layout files can also be used in your map tools. The layout file can contain layout messages for user customization.
+                Layout file names need to be unique and end with Plugin, e.g., TutorialPlugin.
+                Please see the UI Customization documentation for more info on Cityworks XML files.
+                <br />
+                <br />
+                The proxy has a function for easily getting layout messages. This function takes an argument of the layout name and returns a Dojo Deferred. 
+                It is recommended you do this in the init function as shown in the following example.
+                <pre class="code">
+                    <code class="js">
+this.init = function() {
+    var dfd = proxy.utility.deferred();
+    proxy.layout.getDefinition("Tutorial").then(function (definition) {
+                var defMessages = definition.Messages;
+                dfd.resolve();
+            }, function (failed) {
+                dfd.reject(failed);
+            });
+    return dfd;
+};          
+                    </code>
+                </pre>
+             </p>
+		</div>
+        <div class="mg-top-lg" id="step1f">
+			<h3>Step 1f: Map Tool as a Menu (optional)</h3>
+            <p>
+                Map tools can alternately be added in as a menu instead of loading in a side panel.
+                The proxy has a createSubMenu function to add the map tool as a menu. 
+                This function takes the map tools id as a parameter which you should get from the config object.
+                It returns a ul HTML element that is the menu. You can then add the li HTML elements you want in your menu.
+                <br />
+                <br />
+                When adding a map tool as a menu the show function is not required. The initialization of the menu UI should be done in the init function.
+                <br />
+                <br />
+                The following example shows adding our example plugin as a menu.
+                <pre class="code">
+                    <code class="js">
+define(["dojo", "esri/dijit/LocateButton"], function(_dojo, LocateButton){
+    return function (proxy, cfg) {
+
+        function initUI() {
+            var menu = proxy.layout.createSubMenu(cfg.id);
+
+            var menuItem = $('&lt;li&gt;&lt;/li&gt;').css({"padding-left": "3px", "background": "#536e87"}).appendTo(menu);
+            var menuItemContainer = $('&lt;div&gt;&lt;/div&gt;').appendTo(menuItem);
+
+            var locateButton = new LocateButton({map: proxy.map.get()}, menuItemContainer[0]);
+            locateButton.startup();
+        };
+
+        this.init = function() {
+            var dfd = proxy.utility.deferred();
+            initUI();
+            dfd.resolve();
+            return dfd;
+        };
+    };
+});         
+                    </code>
+                </pre>
+             </p>
+		</div>
+        <div class="mg-top-lg" id="step2">
+            <h3>Step 2: Create an overriding XML file</h3>
+            <p>
+                Loading of map tools is set by the PluginLoaderPlugin XML file. An overriding XML file needs to be created to add your map tool to the map.
+                Please see the UI Customization documentation for more info on Cityworks XML files.
+                The following sample shows an overriding xml for adding the tutorial map tool to the map.
+                <pre class="code">
+                    <code class="xml">
+&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;pluginLayout xmlns="http://www.azteca.com/cityworks/layout/pluginLayout"&gt;
+  &lt;messages&gt;
+    &lt;message id="tutorialSample" title="Tutorial Sample"&gt;
+      &lt;value&gt;custom/tutorial&lt;/value&gt;
+    &lt;/message&gt;
+  &lt;/messages&gt;
+&lt;/pluginLayout&gt;
+                    </code>
+                </pre>
+             </p>
+        </div>
+        <div class="mg-top-lg" id="step3">
+            <h3>Step 3: Upload the files to the Cityworks site</h3>
+            <p>
+                Deploying a map tool to a Cityworks site consists of copying the files to the site.
+                <br />
+                <br />
+                The JavaScript files get copied to the Assets\map\custom folder of the website.
+                <br />
+                <br />
+                Any css files get copied to the Assets\map\custom\css folder of the website.
+                <br />
+                <br />
+                The overriding XML files get copied to the custom XML folder for the site. This can be configured differently for each user or domain.
+                Please see the UI Customization documentation for more info on Cityworks XML files. 
+            </p>
+        </div>
+        <div class="mg-top-lg" id="ref1">
+            <h3>Plugin Proxy reference</h3>
+            <table class="ref-table mg-top-lg">
+                <thead>
+                    <th>Function</th>
+                    <th>Explanation</th>
+                    <th>Arguments</th>
+                    <th>Return Type</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>cwWKID</td>
+                        <td>Returns Esri WKID for the map spatial reference Cityworks uses</td>
+                        <td>This is a constant, not a function</td>
+                        <td>Number</td>
+                    </tr>
+                     <tr>
+                        <td>user.current</td>
+                        <td>Returns object for the current user logged into Cityworks</td>
+                        <td>None</td>
+                        <td>CWUser object</td>
+                    </tr>
+                     <tr>
+                        <td>log.reportMessage</td>
+                        <td>Adds a message to the developer console in the browser</td>
+                        <td>message: string</td>
+                        <td>Void</td>
+                    </tr>
+                     <tr>
+                        <td>log.userMessage</td>
+                        <td>Displays a message to the user</td>
+                        <td>message: string</td>
+                        <td>Void</td>
+                    </tr>
+                     <tr>
+                        <td>layout.getDefinition</td>
+                        <td>Returns a Dojo Deferred that contains the plugin layout definition from the requested file</td>
+                        <td>fileName: string</td>
+                        <td>Dojo Deferred</td>
+                    </tr>
+                    <tr>
+                        <td>layout.addCssFile</td>
+                        <td>Adds a css file to the map</td>
+                        <td>folder: string, fileName: string</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>layout.createLeadingPanel</td>
+                        <td>Creates a panel for holding content on the leading(left) side of the map</td>
+                        <td>config: Object</td>
+                        <td>Dojo ContentPane</td>
+                    </tr>
+                    <tr>
+                        <td>layout.createTrailingPanel</td>
+                        <td>Creates a panel for holding content on the trailing(right) side of the map</td>
+                        <td>config: Object</td>
+                        <td>Dojo ContentPane</td>
+                    </tr>
+                    <tr>
+                        <td>layout.toggleRegion</td>
+                        <td>Expand or collapse a region(leading, trailing, or bottom)</td>
+                        <td>config: Object {region: string, expanded: boolean}</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>layout.selectChild</td>
+                        <td>Select a Dojo ContentPane</td>
+                        <td>child: Dojo ContentPane</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>layout.createSubMenu</td>
+                        <td>Creates a sub menu for the tool in the menu.</td>
+                        <td>mapToolId: string</td>
+                        <td>ul HTML Element</td>
+                    </tr>
+                    <tr>
+                        <td>entity.configuration</td>
+                        <td>Returns a Dojo Deferred that contains the configuration of the requested entity type</td>
+                        <td>entityType: string</td>
+                        <td>Dojo Deferred</td>
+                    </tr>
+                    <tr>
+                        <td>map.get</td>
+                        <td>Return Esri Map object</td>
+                        <td>None</td>
+                        <td>Esri Map</td>
+                    </tr>
+                    <tr>
+                        <td>map.zoomToGeometry</td>
+                        <td>Zoom to extent of the requested geometry, optionally expanded by a factor</td>
+                        <td>geometry: EsriGeometry, expand: number</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>map.zoomToFullExtent</td>
+                        <td>Zoom to the full extent of the map</td>
+                        <td>None</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>map.layers.all</td>
+                        <td>Returns an array of all layers in the map</td>
+                        <td>None</td>
+                        <td>Array<Esri Layer></td>
+                    </tr>
+                    <tr>
+                        <td>map.layers.byId</td>
+                        <td>Returns an Esri Layer in the map with the requested id</td>
+                        <td>id: string</td>
+                        <td>Esri Layer</td>
+                    </tr>
+                    <tr>
+                        <td>map.layers.byUrl</td>
+                        <td>Returns an Esri Layer in the map with the requested url</td>
+                        <td>url: string</td>
+                        <td>Esri Layer</td>
+                    </tr>
+                    <tr>
+                        <td>map.layers.add</td>
+                        <td>Adds a layer to the map. An error message is added to the developer console if the layer fails to load.</td>
+                        <td>layer: Esri Layer</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>map.layers.remove</td>
+                        <td>Removed a layer from the map</td>
+                        <td>layerId: string</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>results.add</td>
+                        <td>Adds features to the result grid and optionally calls a function when complete</td>
+                        <td>results:{entityType: string, graphics:Array<Esri Graphic>, id: string, showResults: boolean}, callback: function</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>results.update</td>
+                        <td>Updates an existing set of feature results in the result grid</td>
+                        <td>results:{entityType: string, graphics:Array<Esri Graphic>}, callback: function</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>results.clear</td>
+                        <td>Clears the result grid</td>
+                        <td>None</td>
+                        <td>Void</td>
+                    </tr>
+                    <tr>
+                        <td>utilities.deferred</td>
+                        <td>Returns a new Dojo Deferred</td>
+                        <td>None</td>
+                        <td>Dojo Deferred</td>
+                    </tr>
+                    <tr>
+                        <td>geocode.service</td>
+                        <td>Returns an Esri Locator that uses the geocoding service configured for the current user</td>
+                        <td>None</td>
+                        <td>Esri Locator</td>
+                    </tr>
+                    <tr>
+                        <td>geometry.project</td>
+                        <td>Returns a Dojo Deferred that contains the requested geometries projected into the requested spatial reference</td>
+                        <td>geometries:Array<Esri Geometry>, spatailReference: Esri Spatial Reference</td>
+                        <td>Dojo Deferred</td>
+                    </tr>
+                    <tr>
+                        <td>geometry.service</td>
+                        <td>Returns an Esri GeometryService that uses the geometry service configured for the current user</td>
+                        <td>None</td>
+                        <td>Esri GeometryService</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mg-top-lg" id="ref2">
+            <h3>Updating map tools from Cityworks 2015 and older</h3>
+            <p>
+                At Cityworks 15.1 the requirements of map tools changed slightly. This was necessary due to various enhancements to the map toolbar.
+                <br/>
+                <br/>
+                Below is a list of the changes for migrating a map tool to Cityworks 15.1 and newer:
+                <ul>
+                    <li class="pad-top-sm">
+                        Map tools now have 2 required functions, init and show. These functions need to be exposed on your return function.
+                        The init function must return a Dojo Deferred. The show function does not need to return anything. 
+                    </li>
+                    <li class="pad-top-sm">
+                        The title function is no longer required on the return function. 
+                        The title is now set in the PluginLoaderPlugin XML and passed to each map tool as an attribute of the config object.
+                    </li>
+                    <li class="pad-top-sm">
+                        The map tool no longer initializes itself. The init function is now called by the map tool framework when the map tool is loaded.
+                    </li>
+                    <li class="pad-top-sm">
+                        The map tool no longer adds itself to the toolbar. Previously the map tool would call the proxy.tools.add function to add itself to the toolbar. 
+                        Now the map tool framework adds each map tool to the toolbar and calls the tools show function when it is selected.
+                    </li>
+                </ul>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

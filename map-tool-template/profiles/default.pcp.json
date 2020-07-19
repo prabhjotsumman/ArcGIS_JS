@@ -1,0 +1,14 @@
+{
+  "isBuiltIn": true,
+  "name": "default",
+  "pluginName": "Map Tool Template",
+  "pluginUid": "44085b3eccaabb88c9da5f976dc742754b838375b2e88d32",
+  "pluginVersion": "1.0.0",
+  "layouts": {
+    "MapToolTemplate": {
+      "strings": {
+        "title": "Template"
+      }
+    }
+  }
+}
