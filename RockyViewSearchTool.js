@@ -155,7 +155,34 @@ define([
         }
 
     }
-    function GetExtentByLegal(){
+    function GetExtentByLegal(legal){ 
+        //NE-11-23-28
+       var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+          <s:Body>
+            <GetExtentByLegal xmlns="http://tempuri.org/">
+              <legal>${legal}</legal>
+            </GetExtentByLegal>
+          </s:Body>
+        </s:Envelope>`;
+
+        var XMLResponse = getDataFromWCFService({
+          XMLRequestString,
+          SOAPAction: "GetExtentByLegal",
+        });
+
+        if (!XMLResponse.error) {
+          console.log("Error got from server");
+          return;
+        } else {
+          let XMLString = XMLResponse.response;
+          var [xCoord, yCoord] = xmlParser(XMLString, "a:double");
+          var extent = new extend(
+            xCoord,
+            yCoord,
+            new SpatialReference({ wkid: 4326 })
+          );
+          zoomTo(extent);
+        }
 
     }
     function GetExtentByMunAddress(){
