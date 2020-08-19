@@ -122,7 +122,37 @@ define([
       }
     };
 
-    function GetExtentByIntersection(){
+    function GetExtentByIntersection(firstRoad, secondRoad){
+        firstRoad = removeSpaces(firstRoad).toUpperCase();
+        secondRoad = removeSpaces(secondRoad).toUpperCase();
+
+        var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+          <s:Body>
+            <GetExtentByIntersection xmlns="http://tempuri.org/">
+              <firstRoad>${firstRoad}</firstRoad>
+              <secondRoad>${secondRoad}</secondRoad>
+            </GetExtentByIntersection>
+          </s:Body>
+        </s:Envelope>;`;
+
+        var XMLResponse = getDataFromWCFService({
+          XMLRequestString,
+          SOAPAction: "GetExtentByIntersection",
+        });
+
+        if (!XMLResponse.error) {
+          console.log("Error got from server");
+          return;
+        } else {
+          let XMLString = XMLResponse.response;
+          var [xCoord, yCoord] = xmlParser(XMLString, "a:string");
+          var extent = new extend(
+            xCoord,
+            yCoord,
+            new SpatialReference({ wkid: 4326 })
+          );
+          zoomTo(extent);
+        }
 
     }
     function GetExtentByLegal(){
@@ -138,7 +168,7 @@ define([
 
     }
     function GetExtentRoadNames(roadName){
-        roadName = roadName.replace(/\s/g, '');
+        roadName = removeSpaces(roadName).toUpperCase();
         XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentRoadNames xmlns="http://tempuri.org/"><roadName>${roadName}</roadName></GetExtentRoadNames></s:Body></s:Envelope>`;
 
         var XMLResponse = getDataFromWCFService({
@@ -152,7 +182,10 @@ define([
         }
         else{
             let XMLString = XMLResponse.response;
-            var [ xCoordLeft , yCoordLeft, xCoordRight, yCoordRight ] = xmlParser(XMLString);
+            var [xCoordLeft, yCoordLeft, xCoordRight, yCoordRight] = xmlParser(
+              XMLString,
+              "a:double"
+            );
             var extent = new extend(
                 xCoordLeft,
                 yCoordLeft,
@@ -164,11 +197,11 @@ define([
         }
     }
 
-    function xmlParser(xmlString){
+    function xmlParser(xmlString, tag){
         var parser = new DOMParser();
         xmlDoc = parser.parseFromString(xmlString, "text/xml");
         
-        var nodes = xmlDoc.getElementsByTagName("a:double");
+        var nodes = xmlDoc.getElementsByTagName(tag);
         var coordinates = [];
         for(var i=0 ; i < nodes.length ; i++){
             values.push(nodes[i].childNodes[0].nodeValue);
@@ -207,6 +240,10 @@ define([
 
     function getServiceSvcServerURL() {
       return "https://ams.mdrockyview.ab.ca/cwrks.Service/Search.svc";
+    }
+
+    function removeSpaces(string) {
+        return string.replace(/\s/g, "");
     }
 
     function getCustomWidgetHTML() {
