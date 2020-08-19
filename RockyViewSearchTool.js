@@ -88,6 +88,8 @@ define([
       searchBtn.addEventListener("click", function () {
         let inputElements = document.querySelector(".collapsible.active");
 
+        let queryField = inputElements.id; //GetExtentByIntersection, GetExtentByLegal : get ID
+
         let inputs =
           (inputElements &&
             inputElements.nextElementSibling.querySelectorAll("input")) ||
@@ -99,6 +101,42 @@ define([
           query += inputs[i].value + " ";
         }
         console.log(query);
+
+        switch (queryField) {
+          case "GetExtentByIntersection":
+            let firstRoad = inputs[0].value;
+            let secondRoad = inputs[1].value;
+            GetExtentByIntersection(firstRoad, secondRoad);
+            break;
+
+          case "GetExtentByLegal":
+            let legal = query.split(" ").join("-").toUpperCase();
+            GetExtentByLegal(legal);
+            break;
+
+          case "GetExtentByMunAddress":
+            let houseNum = inputs[0].value;
+            let roadName = inputs[1].value;
+            GetExtentByMunAddress(houseNum, roadName);
+            break;
+
+          case "GetExtentByOwner":
+            GetExtentByOwner();
+            break;
+
+          case "GetExtentByRoll":
+            GetExtentByRoll();
+            break;
+
+          case "GetExtentRoadNames":
+            GetExtentRoadNames(roadName);
+            break;
+
+
+          default:
+            break;
+
+        }
       });
     }
 
@@ -122,11 +160,11 @@ define([
       }
     };
 
-    function GetExtentByIntersection(firstRoad, secondRoad){
-        firstRoad = removeSpaces(firstRoad).toUpperCase();
-        secondRoad = removeSpaces(secondRoad).toUpperCase();
+    function GetExtentByIntersection(firstRoad, secondRoad) {
+      firstRoad = removeSpaces(firstRoad).toUpperCase();
+      secondRoad = removeSpaces(secondRoad).toUpperCase();
 
-        var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
           <s:Body>
             <GetExtentByIntersection xmlns="http://tempuri.org/">
               <firstRoad>${firstRoad}</firstRoad>
@@ -135,29 +173,28 @@ define([
           </s:Body>
         </s:Envelope>;`;
 
-        var XMLResponse = getDataFromWCFService({
-          XMLRequestString,
-          SOAPAction: "GetExtentByIntersection",
-        });
+      var XMLResponse = getDataFromWCFService({
+        XMLRequestString,
+        SOAPAction: "GetExtentByIntersection",
+      });
 
-        if (!XMLResponse.error) {
-          console.log("Error got from server");
-          return;
-        } else {
-          let XMLString = XMLResponse.response;
-          var [xCoord, yCoord] = xmlParser(XMLString, "a:string");
-          var extent = new extend(
-            xCoord,
-            yCoord,
-            new SpatialReference({ wkid: 4326 })
-          );
-          zoomTo(extent);
-        }
-
+      if (!XMLResponse.error) {
+        console.log("Error got from server");
+        return;
+      } else {
+        let XMLString = XMLResponse.response;
+        var [xCoord, yCoord] = xmlParser(XMLString, "a:string");
+        var extent = new extend(
+          xCoord,
+          yCoord,
+          new SpatialReference({ wkid: 4326 })
+        );
+        zoomTo(extent);
+      }
     }
-    function GetExtentByLegal(legal){ 
-        //NE-11-23-28
-       var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    function GetExtentByLegal(legal) {
+      //NE-11-23-28
+      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
           <s:Body>
             <GetExtentByLegal xmlns="http://tempuri.org/">
               <legal>${legal}</legal>
@@ -165,29 +202,28 @@ define([
           </s:Body>
         </s:Envelope>`;
 
-        var XMLResponse = getDataFromWCFService({
-          XMLRequestString,
-          SOAPAction: "GetExtentByLegal",
-        });
+      var XMLResponse = getDataFromWCFService({
+        XMLRequestString,
+        SOAPAction: "GetExtentByLegal",
+      });
 
-        if (!XMLResponse.error) {
-          console.log("Error got from server");
-          return;
-        } else {
-          let XMLString = XMLResponse.response;
-          var [xCoord, yCoord] = xmlParser(XMLString, "a:double");
-          var extent = new extend(
-            xCoord,
-            yCoord,
-            new SpatialReference({ wkid: 4326 })
-          );
-          zoomTo(extent);
-        }
-
+      if (!XMLResponse.error) {
+        console.log("Error got from server");
+        return;
+      } else {
+        let XMLString = XMLResponse.response;
+        var [xCoord, yCoord] = xmlParser(XMLString, "a:double");
+        var extent = new extend(
+          xCoord,
+          yCoord,
+          new SpatialReference({ wkid: 4326 })
+        );
+        zoomTo(extent);
+      }
     }
     function GetExtentByMunAddress(houseNum, roadName) {
-        // <houseNum>262075</houseNum>
-        // <roadName>ROCKY VIEW POINT</roadName>
+      // <houseNum>262075</houseNum>
+      // <roadName>ROCKY VIEW POINT</roadName>
       var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
           <s:Body>
             <GetExtentByMunAddress xmlns="http://tempuri.org/">
@@ -214,8 +250,10 @@ define([
 
         // var Address =xmlDoc.getElementsByTagName("a:Address")[0].childNodes[0].nodeValue;
         // var ID =xmlDoc.getElementsByTagName("a:ID")[0].childNodes[0].nodeValue;
-        var xCoord =xmlDoc.getElementsByTagName("a:decX")[0].childNodes[0].nodeValue;
-        var yCoord =xmlDoc.getElementsByTagName("a:decY")[0].childNodes[0].nodeValue;
+        var xCoord = xmlDoc.getElementsByTagName("a:decX")[0].childNodes[0]
+          .nodeValue;
+        var yCoord = xmlDoc.getElementsByTagName("a:decY")[0].childNodes[0]
+          .nodeValue;
 
         // <a:spGetXYCoordByMunicipalAddress_Result>
         //   <a:Address>262075 ROCKY VIEW POINT</a:Address>
@@ -232,52 +270,47 @@ define([
         zoomTo(extent);
       }
     }
-    function GetExtentByOwner(){
+    function GetExtentByOwner() {}
+    function GetExtentByRoll() {}
+    function GetExtentRoadNames(roadName) {
+      roadName = removeSpaces(roadName).toUpperCase();
+      XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentRoadNames xmlns="http://tempuri.org/"><roadName>${roadName}</roadName></GetExtentRoadNames></s:Body></s:Envelope>`;
 
-    }
-    function GetExtentByRoll(){
+      var XMLResponse = getDataFromWCFService({
+        XMLRequestString,
+        SOAPAction: "GetExtentRoadNames",
+      });
 
-    }
-    function GetExtentRoadNames(roadName){
-        roadName = removeSpaces(roadName).toUpperCase();
-        XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentRoadNames xmlns="http://tempuri.org/"><roadName>${roadName}</roadName></GetExtentRoadNames></s:Body></s:Envelope>`;
-
-        var XMLResponse = getDataFromWCFService({
-          XMLRequestString,
-          SOAPAction: "GetExtentRoadNames",
-        });
-
-        if(!XMLResponse.error){
-            console.log("Error got from server");
-            return;
-        }
-        else{
-            let XMLString = XMLResponse.response;
-            var [xCoordLeft, yCoordLeft, xCoordRight, yCoordRight] = xmlParser(
-              XMLString,
-              "a:double"
-            );
-            var extent = new extend(
-                xCoordLeft,
-                yCoordLeft,
-                xCoordRight,
-                yCoordRight,
-                new SpatialReference({wkid: 4326})
-            );
-            zoomTo(extent);
-        }
+      if (!XMLResponse.error) {
+        console.log("Error got from server");
+        return;
+      } else {
+        let XMLString = XMLResponse.response;
+        var [xCoordLeft, yCoordLeft, xCoordRight, yCoordRight] = xmlParser(
+          XMLString,
+          "a:double"
+        );
+        var extent = new extend(
+          xCoordLeft,
+          yCoordLeft,
+          xCoordRight,
+          yCoordRight,
+          new SpatialReference({ wkid: 4326 })
+        );
+        zoomTo(extent);
+      }
     }
 
-    function xmlParser(xmlString, tag){
-        var parser = new DOMParser();
-        xmlDoc = parser.parseFromString(xmlString, "text/xml");
-        
-        var nodes = xmlDoc.getElementsByTagName(tag);
-        var coordinates = [];
-        for(var i=0 ; i < nodes.length ; i++){
-            values.push(nodes[i].childNodes[0].nodeValue);
-        }
-        return coordinates;        
+    function xmlParser(xmlString, tag) {
+      var parser = new DOMParser();
+      xmlDoc = parser.parseFromString(xmlString, "text/xml");
+
+      var nodes = xmlDoc.getElementsByTagName(tag);
+      var coordinates = [];
+      for (var i = 0; i < nodes.length; i++) {
+        values.push(nodes[i].childNodes[0].nodeValue);
+      }
+      return coordinates;
     }
 
     function getDataFromWCFService({ XMLRequestString, SOAPAction }) {
@@ -314,15 +347,15 @@ define([
     }
 
     function removeSpaces(string) {
-        return string.replace(/\s/g, "");
+      return string.replace(/\s/g, "");
     }
 
     function getCustomWidgetHTML() {
-        return ` <div>
+      return ` <div>
     <div id="viewDiv"></div>
     <div id="searchWidgetDiv" class="searchWidgetContainer card">
       <form onsubmit="return false;">
-        <button class="collapsible" onclick="return false;">Search By Intersection</button>
+        <button class="collapsible" onclick="return false;" id="GetExtentByIntersection">Search By Intersection</button>
         <div class="content">
           <div class="searchInputDiv">
             <label for="firstRoad">First Road</label>
@@ -333,14 +366,14 @@ define([
             <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
           </div>
         </div>
-        <button class="collapsible" onclick="return false;">Search By Road Name</button>
+        <button class="collapsible" onclick="return false;" id="GetExtentRoadNames">Search By Road Name</button>
         <div class="content">
           <div class="searchInputDiv">
             <label for="RoadName">Type Road Name</label>
             <input class="input-field" type="text" id="RoadName" name="RoadName" placeholder="">
           </div>
         </div>
-        <button class="collapsible" onclick="return false;">Search By Legal Desc</button>
+        <button class="collapsible" onclick="return false;" id="GetExtentByLegal">Search By Legal Desc</button>
         <div class="content">
           <div class="descInputDiv">
             <label for="Quarter">Quarter</label>
@@ -359,7 +392,7 @@ define([
             <input class="input-field desc-field" type="text" id="Rge" name="Rge" placeholder="">
           </div>
         </div>
-        <button class="collapsible" onclick="return false;">Search By Municipal Address</button>
+        <button class="collapsible" onclick="return false;" id="GetExtentByMunAddress">Search By Municipal Address</button>
         <div class="content">
           <div class="searchInputDiv">
             <label for="House">House No.</label>
@@ -370,7 +403,7 @@ define([
             <input class="input-field" type="text" id="RoadName" name="RoadName" placeholder="">
           </div>
         </div>
-        <button class="collapsible" onclick="return false;">Search By Owner</button>
+        <button class="collapsible" onclick="return false;" id="GetExtentByOwner">Search By Owner</button>
         <div class="content">
           <div class="searchInputDiv">
             <label for="firstName">First Name</label>
@@ -381,7 +414,7 @@ define([
             <input class="input-field" type="text" id="secondName" name="secondName" placeholder="">
           </div>
         </div>
-        <button class="collapsible" onclick="return false;">Search By Roll</button>
+        <button class="collapsible" onclick="return false;" id="GetExtentByRoll">Search By Roll</button>
         <div class="content">
           <div class="searchInputDiv">
             <label for="rollNo">Type Roll Number</label>
@@ -395,6 +428,5 @@ define([
     </div>
   </div>`;
     }
-
   };
 });
