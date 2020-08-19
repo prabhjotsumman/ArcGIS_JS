@@ -108,7 +108,7 @@ require(["dojo"], function (_dojo) {
       proxy.layout.toggleRegion({ region: "trailing", expanded: true });
       proxy.layout.selectChild(displayPanel);
     }
-    
+
     this.show = function () {
       console.log("show");
       if (!initialized) {
@@ -188,7 +188,7 @@ function search() {
     query += inputs[i].value + " ";
   }
   console.log(query);
-  searchQueryInEsriWidget(query);
+  // searchQueryInEsriWidget(query);
 }
 
 function searchQueryInEsriWidget(query) {

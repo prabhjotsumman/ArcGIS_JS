@@ -1,0 +1,30 @@
+private void ZoomTo(double xCoord, double yCoord)
+        {
+               
+                var gl = Utilities.Help_Layer.GetGraphicsLayer("SampleLayer", "Samples", true);
+                gl.Graphics.Clear();
+                              
+
+                ESRI.ArcGIS.Client.Geometry.MapPoint pt = new ESRI.ArcGIS.Client.Geometry.MapPoint( xCoord, yCoord, Utilities.ClientMap.SpatialReference);
+
+                ESRI.ArcGIS.Client.Geometry.Envelope env = new ESRI.ArcGIS.Client.Geometry.Envelope(xCoord-100, yCoord - 100, xCoord + 100, yCoord + 100);
+
+                var gl1 = new ESRI.ArcGIS.Client.Graphic
+                {
+                    Geometry = pt,                
+                    Symbol = new ESRI.ArcGIS.Client.Symbols.SimpleMarkerSymbol
+                    {
+                        Color = new SolidColorBrush(Colors.Red),
+                        Size = 15,
+                        Style = ESRI.ArcGIS.Client.Symbols.SimpleMarkerSymbol.SimpleMarkerStyle.Circle
+                    }
+                };
+
+
+                //gl1.Attributes.Add("Field1", 1);
+                //gl1.Attributes.Add("Field2", "You may be here.");
+                //gl1.Attributes.Add("Field3", "Plugins are awesome");
+
+                gl.Graphics.Add(gl1);
+                Utilities.ClientMap.ZoomTo(env);
+}
