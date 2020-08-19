@@ -185,8 +185,52 @@ define([
         }
 
     }
-    function GetExtentByMunAddress(){
+    function GetExtentByMunAddress(houseNum, roadName) {
+        // <houseNum>262075</houseNum>
+        // <roadName>ROCKY VIEW POINT</roadName>
+      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+          <s:Body>
+            <GetExtentByMunAddress xmlns="http://tempuri.org/">
+              <houseNum>${houseNum}</houseNum>
+              <roadName>${roadName}</roadName>
+            </GetExtentByMunAddress>
+          </s:Body>
+        </s:Envelope>;`;
 
+      var XMLResponse = getDataFromWCFService({
+        XMLRequestString,
+        SOAPAction: "GetExtentByMunAddress",
+      });
+
+      if (!XMLResponse.error) {
+        console.log("Error got from server");
+        return;
+      } else {
+        let XMLString = XMLResponse.response;
+        // var [xCoord, yCoord] = xmlParser(XMLString, "a:double");
+
+        var parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlString, "text/xml");
+
+        // var Address =xmlDoc.getElementsByTagName("a:Address")[0].childNodes[0].nodeValue;
+        // var ID =xmlDoc.getElementsByTagName("a:ID")[0].childNodes[0].nodeValue;
+        var xCoord =xmlDoc.getElementsByTagName("a:decX")[0].childNodes[0].nodeValue;
+        var yCoord =xmlDoc.getElementsByTagName("a:decY")[0].childNodes[0].nodeValue;
+
+        // <a:spGetXYCoordByMunicipalAddress_Result>
+        //   <a:Address>262075 ROCKY VIEW POINT</a:Address>
+        //   <a:ID>147729</a:ID>
+        //   <a:decX>4186.05010000</a:decX>
+        //   <a:decY>5675612.05520000</a:decY>
+        // </a:spGetXYCoordByMunicipalAddress_Result>;
+
+        var extent = new extend(
+          xCoord,
+          yCoord,
+          new SpatialReference({ wkid: 4326 })
+        );
+        zoomTo(extent);
+      }
     }
     function GetExtentByOwner(){
 
