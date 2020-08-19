@@ -102,21 +102,11 @@ define([
       });
     }
 
-    function zoomTo() {
-      console.log("--------------");
+    function zoomTo(extent) {
       var mymap = proxy.map.get();
-      var extent = new Extent(
-        -23620.374,
-        5674364.204,
-        -22881.483,
-        5674389.829,
-        new SpatialReference({ wkid: 4326 })
-      );
       mymap.extent = extent;
-      console.log("EX", extent);
     }
 
-    
     this.show = function () {
       if (!initialized) {
         //We will create the UI here before showing it
@@ -124,7 +114,7 @@ define([
         var uiConfig = initUI();
         displayPanel = proxy.layout.createTrailingPanel(uiConfig);
         onload();
-        zoomTo();
+        // zoomTo();
         selectChild();
       } else {
         //The UI is already created so just show it
@@ -161,17 +151,29 @@ define([
             return;
         }
         else{
-                let XMLString = XMLResponse.response;
-
-                //parse XML
-                var extent = new Extent(
-                  -23620.374,
-                  5674364.204,
-                  -22881.483,
-                  5674389.829,
-                  new SpatialReference({ wkid: 4326 })
-                );
+            let XMLString = XMLResponse.response;
+            var [ xCoordLeft , yCoordLeft, xCoordRight, yCoordRight ] = xmlParser(XMLString);
+            var extent = new extend(
+                xCoordLeft,
+                yCoordLeft,
+                xCoordRight,
+                yCoordRight,
+                new SpatialReference({wkid: 4326})
+            );
+            zoomTo(extent);
         }
+    }
+
+    function xmlParser(xmlString){
+        var parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlString, "text/xml");
+        
+        var nodes = xmlDoc.getElementsByTagName("a:double");
+        var coordinates = [];
+        for(var i=0 ; i < nodes.length ; i++){
+            values.push(nodes[i].childNodes[0].nodeValue);
+        }
+        return coordinates;        
     }
 
     function getDataFromWCFService({ XMLRequestString, SOAPAction }) {
