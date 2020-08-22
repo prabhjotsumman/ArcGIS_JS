@@ -5,6 +5,7 @@ define([
   "esri/map",
   "dojo/domReady!",
   "esri/graphic",
+  "esri/geometry/Point",
   "esri/symbols/SimpleMarkerSymbol",
   "esri/tasks/GeometryService",
   "esri/tasks/ProjectParameters",
@@ -16,6 +17,7 @@ define([
   Map,
   dom,
   Graphic,
+  Point,
   SimpleMarkerSymbol,
   GeometryService,
   ProjectParameters,
@@ -27,7 +29,6 @@ define([
 
     function initUI() {
       var config = { label: cfg.title, title: cfg.title };
-      console.log("initUI: n", container);
       var container = _dojo.create("div");
       var button = _dojo.create("button");
       container.appendChild(button);
@@ -70,12 +71,9 @@ define([
       for (let i = 0; i < coll.length; i++) {
         coll[i].addEventListener("click", function () {
           collapseAll();
-
           let classList = this.classList;
           let content = this.nextElementSibling;
-
           classList.toggle("active");
-
           if (content.style.maxHeight) {
             content.style.maxHeight = null;
           } else {
@@ -87,17 +85,13 @@ define([
 
       searchBtn.addEventListener("click", function () {
         let inputElements = document.querySelector(".collapsible.active");
-
         let queryField = inputElements.id; //GetExtentByIntersection, GetExtentByLegal : get ID
-
         let inputs =
           (inputElements &&
             inputElements.nextElementSibling.querySelectorAll("input")) ||
           [];
-
         let query = "";
         for (let i = 0; i < inputs.length; i++) {
-          // console.log(inputs[i].value);
           query += inputs[i].value + " ";
         }
         console.log(query);
@@ -129,13 +123,12 @@ define([
             break;
 
           case "GetExtentRoadNames":
-            GetExtentRoadNames(roadName);
+            let roadNames = query;
+            GetExtentRoadNames(roadNames);
             break;
-
 
           default:
             break;
-
         }
       });
     }
@@ -147,7 +140,6 @@ define([
 
     this.show = function () {
       if (!initialized) {
-        //We will create the UI here before showing it
         initialized = true;
         var uiConfig = initUI();
         displayPanel = proxy.layout.createTrailingPanel(uiConfig);
@@ -155,7 +147,6 @@ define([
         // zoomTo();
         selectChild();
       } else {
-        //The UI is already created so just show it
         selectChild();
       }
     };
@@ -173,24 +164,32 @@ define([
           </s:Body>
         </s:Envelope>;`;
 
-      var XMLResponse = getDataFromWCFService({
+      var XMLRequest = getDataFromWCFService({
         XMLRequestString,
         SOAPAction: "GetExtentByIntersection",
       });
 
-      if (!XMLResponse.error) {
-        console.log("Error got from server");
-        return;
-      } else {
-        let XMLString = XMLResponse.response;
-        var [xCoord, yCoord] = xmlParser(XMLString, "a:string");
-        var extent = new extend(
-          xCoord,
-          yCoord,
-          new SpatialReference({ wkid: 4326 })
-        );
-        zoomTo(extent);
-      }
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          var [xCoord, yCoord] = xmlParser(XMLString, "a:string").map((coord) =>
+            parseFloat(coord)
+          );
+          console.log([xCoord, yCoord]);
+          var extent = new Extent(
+            xCoord - 100,
+            yCoord - 100,
+            xCoord + 100,
+            yCoord + 100,
+            new SpatialReference({ wkid: 4326 })
+          );
+          console.log(extent);
+          zoomTo(extent);
+        } else {
+          console.log("err!", this.response);
+        }
+      };
     }
     function GetExtentByLegal(legal) {
       //NE-11-23-28
@@ -202,24 +201,32 @@ define([
           </s:Body>
         </s:Envelope>`;
 
-      var XMLResponse = getDataFromWCFService({
+      var XMLRequest = getDataFromWCFService({
         XMLRequestString,
         SOAPAction: "GetExtentByLegal",
       });
 
-      if (!XMLResponse.error) {
-        console.log("Error got from server");
-        return;
-      } else {
-        let XMLString = XMLResponse.response;
-        var [xCoord, yCoord] = xmlParser(XMLString, "a:double");
-        var extent = new extend(
-          xCoord,
-          yCoord,
-          new SpatialReference({ wkid: 4326 })
-        );
-        zoomTo(extent);
-      }
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          var [xCoord, yCoord] = xmlParser(XMLString, "a:double").map((coord) =>
+            parseFloat(coord)
+          );
+          console.log([xCoord, yCoord]);
+          var extent = new Extent(
+            xCoord - 100,
+            yCoord - 100,
+            xCoord + 100,
+            yCoord + 100,
+            new SpatialReference({ wkid: 4326 })
+          );
+          console.log(extent);
+          zoomTo(extent);
+        } else {
+          console.log("err!", this.response); // user not found
+        }
+      };
     }
     function GetExtentByMunAddress(houseNum, roadName) {
       // <houseNum>262075</houseNum>
@@ -233,71 +240,124 @@ define([
           </s:Body>
         </s:Envelope>;`;
 
-      var XMLResponse = getDataFromWCFService({
+      var XMLRequest = getDataFromWCFService({
         XMLRequestString,
         SOAPAction: "GetExtentByMunAddress",
       });
 
-      if (!XMLResponse.error) {
-        console.log("Error got from server");
-        return;
-      } else {
-        let XMLString = XMLResponse.response;
-        // var [xCoord, yCoord] = xmlParser(XMLString, "a:double");
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          var parser = new DOMParser();
+          xmlDoc = parser.parseFromString(XMLString, "text/xml");
 
-        var parser = new DOMParser();
-        xmlDoc = parser.parseFromString(xmlString, "text/xml");
+          // var Address =xmlDoc.getElementsByTagName("a:Address")[0].childNodes[0].nodeValue;
+          // var ID =xmlDoc.getElementsByTagName("a:ID")[0].childNodes[0].nodeValue;
+          var xCoord = parseFloat(
+            xmlDoc.getElementsByTagName("a:decX")[0].childNodes[0].nodeValue
+          );
+          var yCoord = parseFloat(
+            xmlDoc.getElementsByTagName("a:decY")[0].childNodes[0].nodeValue
+          );
 
-        // var Address =xmlDoc.getElementsByTagName("a:Address")[0].childNodes[0].nodeValue;
-        // var ID =xmlDoc.getElementsByTagName("a:ID")[0].childNodes[0].nodeValue;
-        var xCoord = xmlDoc.getElementsByTagName("a:decX")[0].childNodes[0]
-          .nodeValue;
-        var yCoord = xmlDoc.getElementsByTagName("a:decY")[0].childNodes[0]
-          .nodeValue;
+          // <a:spGetXYCoordByMunicipalAddress_Result>
+          //   <a:Address>262075 ROCKY VIEW POINT</a:Address>
+          //   <a:ID>147729</a:ID>
+          //   <a:decX>4186.05010000</a:decX>
+          //   <a:decY>5675612.05520000</a:decY>
+          // </a:spGetXYCoordByMunicipalAddress_Result>;
 
-        // <a:spGetXYCoordByMunicipalAddress_Result>
-        //   <a:Address>262075 ROCKY VIEW POINT</a:Address>
-        //   <a:ID>147729</a:ID>
-        //   <a:decX>4186.05010000</a:decX>
-        //   <a:decY>5675612.05520000</a:decY>
-        // </a:spGetXYCoordByMunicipalAddress_Result>;
-
-        var extent = new extend(
-          xCoord,
-          yCoord,
-          new SpatialReference({ wkid: 4326 })
-        );
-        zoomTo(extent);
-      }
+          var extent = new Extent(
+            xCoord - 100,
+            yCoord - 100,
+            xCoord + 100,
+            yCoord + 100,
+            new SpatialReference({ wkid: 4326 })
+          );
+          zoomTo(extent);
+        } else {
+          console.log("err!", this.response); // user not found
+        }
+      };
     }
     function GetExtentByOwner() {}
+
     function GetExtentByRoll() {}
+
     function GetExtentRoadNames(roadName) {
       roadName = removeSpaces(roadName).toUpperCase();
       XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentRoadNames xmlns="http://tempuri.org/"><roadName>${roadName}</roadName></GetExtentRoadNames></s:Body></s:Envelope>`;
 
-      var XMLResponse = getDataFromWCFService({
+      var XMLRequest = getDataFromWCFService({
         XMLRequestString,
         SOAPAction: "GetExtentRoadNames",
       });
 
-      if (!XMLResponse.error) {
-        console.log("Error got from server");
-        return;
-      } else {
-        let XMLString = XMLResponse.response;
-        var [xCoordLeft, yCoordLeft, xCoordRight, yCoordRight] = xmlParser(
-          XMLString,
-          "a:double"
-        );
-        var extent = new extend(
-          xCoordLeft,
-          yCoordLeft,
-          xCoordRight,
-          yCoordRight,
-          new SpatialReference({ wkid: 4326 })
-        );
-        zoomTo(extent);
+      var extenttest = new Extent(
+        -22116.465,
+        5658724.99,
+        -21845.465,
+        5658726.99,
+        new SpatialReference({ wkid: 4326 })
+      );
+      console.log("Extent:", extenttest);
+
+      zoomTo(extenttest);
+
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = XMLResponse.response;
+          let coordinates = xmlParser(XMLString, "a:double");
+          let [
+            xCoordLeft,
+            yCoordLeft,
+            xCoordRight,
+            yCoordRight,
+          ] = coordinates.map((coord) => parseFloat(coord));
+          console.log("Got response back,", coordinates);
+          console.log(
+            "Got response back::,",
+            xCoordLeft,
+            yCoordLeft,
+            xCoordRight,
+            yCoordRight
+          );
+          var extent = new Extent(
+            xCoordLeft,
+            yCoordLeft,
+            xCoordRight,
+            yCoordRight,
+            new SpatialReference({ wkid: 4326 })
+          );
+          console.log("Extent:", extent);
+          zoomTo(extent);
+        } else {
+          console.log("err!"); // user not found
+        }
+      };
+    }
+
+    function addSymbolMarker() {
+      var iconPath =
+        "M24.0,2.199C11.9595,2.199,2.199,11.9595,2.199,24.0c0.0,12.0405,9.7605,21.801,21.801,21.801c12.0405,0.0,21.801-9.7605,21.801-21.801C45.801,11.9595,36.0405,2.199,24.0,2.199zM31.0935,11.0625c1.401,0.0,2.532,2.2245,2.532,4.968S32.4915,21.0,31.0935,21.0c-1.398,0.0-2.532-2.2245-2.532-4.968S29.697,11.0625,31.0935,11.0625zM16.656,11.0625c1.398,0.0,2.532,2.2245,2.532,4.968S18.0555,21.0,16.656,21.0s-2.532-2.2245-2.532-4.968S15.258,11.0625,16.656,11.0625zM24.0315,39.0c-4.3095,0.0-8.3445-2.6355-11.8185-7.2165c3.5955,2.346,7.5315,3.654,11.661,3.654c4.3845,0.0,8.5515-1.47,12.3225-4.101C32.649,36.198,28.485,39.0,24.0315,39.0z";
+
+      var initColor = "#ce641d";
+      let point = { x: -22116.465, y: 5658724.99 };
+      var graphic = new Graphic(
+        new Point(point),
+        createSymbol(iconPath, initColor)
+      );
+      var map = proxy.map.get();
+      map.graphics.add(graphic);
+
+      function createSymbol(path, color) {
+        var markerSymbol = new SimpleMarkerSymbol();
+        markerSymbol.setPath(path);
+        markerSymbol.setColor(new dojo.Color(color));
+        markerSymbol.setOutline(null);
+        return markerSymbol;
       }
     }
 
@@ -320,9 +380,7 @@ define([
       } else if (window.ActiveXObject) {
         xhr = new ActiveXObject("Microsoft.XMLHTTP"); // IE 8 and older
       }
-
       var URL = getServiceSvcServerURL();
-
       xhr.open("POST", URL, true);
       xhr.setRequestHeader("Content-Type", "text/xml; charset=utf-8");
       xhr.setRequestHeader(
@@ -330,20 +388,12 @@ define([
         "http://tempuri.org/ISearch/" + SOAPAction
       );
       xhr.send(XMLRequestString);
-
-      xhr.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-          console.log("DATA:", this.response);
-          return { response: this.response, error: null };
-        } else {
-          console.log("err!"); // user not found
-          return { response: null, error: "Error While fetching Data..." };
-        }
-      };
+      return xhr;
     }
 
     function getServiceSvcServerURL() {
-      return "https://ams.mdrockyview.ab.ca/cwrks.Service/Search.svc";
+      //return "https://ams.mdrockyview.ab.ca/cwrks.Service/Search.svc";
+      return "http://devrvc-cwrks01.mdrockyview.ab.ca/cwrks.Service/Search.svc";
     }
 
     function removeSpaces(string) {
