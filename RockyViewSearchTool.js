@@ -628,37 +628,37 @@ define([
         <div class="content">
           <div class="searchInputDiv autocomplete autocomplete">
             <label for="firstRoad">First Road</label>
-            <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
+            <input data-searchbox="GetExtentByIntersection" class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
           </div>
           <div class="searchInputDiv autocomplete">
             <label for="secondRoad">Second Road</label>
-            <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
+            <input data-searchbox="GetExtentByIntersection" class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentRoadNames">Search By Road Name</button>
         <div class="content">
           <div class="searchInputDiv autocomplete">
             <label for="RoadName">Type Road Name</label>
-            <input class="input-field" type="text" id="RoadNames" name="RoadName" placeholder="">
+            <input data-searchbox="GetExtentRoadNames" class="input-field" type="text" id="RoadNames" name="RoadName" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentByLegal">Search By Legal Desc</button>
         <div class="content">
           <div class="descInputDiv autocomplete">
             <label for="Quarter">Quarter</label>
-            <input class="input-field desc-field" type="text" id="Quarter" name="Quarter" placeholder="">
+            <input data-searchbox="GetExtentByLegal" class="input-field desc-field" type="text" id="Quarter" name="Quarter" placeholder="">
           </div>
           <div class="descInputDiv autocomplete">
             <label for="Section">Section</label>
-            <input class="input-field desc-field" type="text" id="Section" name="Section" placeholder="">
+            <input data-searchbox="GetExtentByLegal" class="input-field desc-field" type="text" id="Section" name="Section" placeholder="">
           </div>
           <div class="descInputDiv autocomplete">
             <label for="TWP">TWP</label>
-            <input class="input-field desc-field" type="text" id="TWP" name="TWP" placeholder="">
+            <input data-searchbox="GetExtentByLegal" class="input-field desc-field" type="text" id="TWP" name="TWP" placeholder="">
           </div>
           <div class="descInputDiv autocomplete">
             <label for="Rge">Rge</label>
-            <input class="input-field desc-field" type="text" id="Rge" name="Rge" placeholder="">
+            <input data-searchbox="GetExtentByLegal" class="input-field desc-field" type="text" id="Rge" name="Rge" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentByMunAddress">Search By Municipal
@@ -666,29 +666,29 @@ define([
         <div class="content">
           <div class="searchInputDiv autocomplete">
             <label for="House">House No.</label>
-            <input class="input-field" type="text" id="House" name="House" placeholder="">
+            <input data-searchbox="GetExtentByMunAddress" class="input-field" type="text" id="House" name="House" placeholder="">
           </div>
           <div class="searchInputDiv autocomplete">
             <label for="RoadName">Road Name</label>
-            <input class="input-field" type="text" id="RoadName" name="RoadName" placeholder="">
+            <input data-searchbox="GetExtentByMunAddress" class="input-field" type="text" id="RoadName" name="RoadName" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentByOwner">Search By Owner</button>
         <div class="content">
           <div class="searchInputDiv autocomplete">
             <label for="firstName">First Name</label>
-            <input class="input-field" type="text" id="firstName" name="firstName" placeholder="">
+            <input data-searchbox="GetExtentByOwner" class="input-field" type="text" id="firstName" name="firstName" placeholder="">
           </div>
           <div class="searchInputDiv autocomplete">
             <label for="secondName">Last Name</label>
-            <input class="input-field" type="text" id="secondName" name="secondName" placeholder="">
+            <input data-searchbox="GetExtentByOwner" class="input-field" type="text" id="secondName" name="secondName" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentByRoll">Search By Roll</button>
         <div class="content">
           <div class="searchInputDiv autocomplete">
             <label for="rollNo">Type Roll Number</label>
-            <input class="input-field" type="text" id="rollNo" name="rollNo" placeholder="">
+            <input data-searchbox="GetExtentByRoll" class="input-field" type="text" id="rollNo" name="rollNo" placeholder="">
           </div>
         </div>
         <div class="search-btn-div">
@@ -712,6 +712,9 @@ define([
           val = this.value;
         /*close any already open lists of autocompleted values*/
         closeAllLists();
+
+        console.log("input: ",inp);
+
         if (!val) {
           return false;
         }
