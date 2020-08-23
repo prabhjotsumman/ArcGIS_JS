@@ -699,6 +699,52 @@ define([
   </div>`;
     }
 
+    function GetExtentByIntersection_autoComplete(firstRoad, secondRoad){
+        let suggestions = [];
+        //req str
+        //get res
+        //put in array
+        return suggestions;
+    }
+    function GetExtentByLegal_autoComplete(legal){
+        let suggestions = [];
+        //req str
+        //get res
+        //put in array
+        return suggestions;
+    }
+    function GetExtentByMunAddress_autoComplete(houseNum, roadName){
+        let suggestions = [];
+        //req str
+        //get res
+        //put in array
+        return suggestions;
+    }
+    function GetExtentByOwner_autoComplete(firstName, lastName){
+        let suggestions = [];
+        //req str
+        //get res
+        //put in array
+        return suggestions;
+    }
+    function GetExtentByRoll_autoComplete(rollNo){
+        let suggestions = [03,031,021];
+        
+        //req str
+        let XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetRoll xmlns="http://tempuri.org/"><roll>${rollNo}</roll></GetRoll></s:Body></s:Envelope>`;
+
+        //get res
+        //put in array
+        return suggestions;
+    }
+    function GetExtentRoadNames_autoComplete(roadNames){
+        let suggestions = [];
+        //req str
+        //get res
+        //put in array
+        return suggestions;
+    }
+
     function autocomplete(inp, arr) {
       /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
@@ -713,7 +759,49 @@ define([
         /*close any already open lists of autocompleted values*/
         closeAllLists();
 
-        console.log("input: ",inp);
+        let inputID = inp.id;
+        let searchBox = inp.dataset.searchbox;
+        console.log("input: ", inp);
+        console.log("inputID: ", inputID);
+        console.log("searchBox: ", searchBox);
+
+        switch (searchBox) {
+          case "GetExtentByIntersection":
+            let firstRoad = inp.value;
+            let secondRoad = inp.value;
+            GetExtentByIntersection_autoComplete(firstRoad, secondRoad);
+            break;
+
+          case "GetExtentByLegal":
+            let legal = query.split(" ").join("-").toUpperCase();
+            GetExtentByLegal_autoComplete(legal);
+            break;
+
+          case "GetExtentByMunAddress":
+            let houseNum = inp.value;
+            let roadName = inp.value;
+            GetExtentByMunAddress_autoComplete(houseNum, roadName);
+            break;
+
+          case "GetExtentByOwner":
+            let firstName = inp.value;
+            let lastName = inp.value;
+            GetExtentByOwner_autoComplete(firstName, lastName);
+            break;
+
+          case "GetExtentByRoll":
+            let rollNo = inp.value;
+            GetExtentByRoll_autoComplete(rollNo);
+            break;
+
+          case "GetExtentRoadNames":
+            let roadNames = query;
+            GetExtentRoadNames_autoComplete(roadNames);
+            break;
+
+          default:
+            break;
+        }
 
         if (!val) {
           return false;
