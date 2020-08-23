@@ -61,7 +61,6 @@ define([
       for (let i = 0; i < options.length; i++) {
         options[i].classList.remove("active");
         let content = options[i].nextElementSibling;
-        content.style.overflow = "hidden";
         if (content.style.maxHeight) {
           content.style.maxHeight = null;
         }
@@ -76,7 +75,6 @@ define([
           let classList = this.classList;
           let content = this.nextElementSibling;
           classList.toggle("active");
-          if ("activeElement" in document) document.activeElement.blur();
           if (content.style.maxHeight) {
             content.style.maxHeight = null;
           } else {
@@ -157,7 +155,6 @@ define([
         var uiConfig = initUI();
         displayPanel = proxy.layout.createTrailingPanel(uiConfig);
         onload();
-        initiateAutoComplete();
         // zoomTo();
         // _dojo.connect(proxy.map.get(), "onExtentChange", zoomToExtent);
         selectChild();
@@ -521,172 +518,73 @@ define([
       return string.replace(/\s/g, "");
     }
 
-    function initiateAutoComplete() {
-      var suggestions = [
-        "Afghanistan",
-        "Albania",
-        "Algeria",
-        "Andorra",
-        "Azerbaijan",
-        "Bahamas",
-        "Bahrain",
-        "Bangladesh",
-        "Barbados",
-        "Belarus",
-        "Belgium",
-        "Estonia",
-        "Ethiopia",
-        "Falkland Islands",
-        "Faroe Islands",
-        "Fiji",
-        "Finland",
-        "France",
-        "French Polynesia",
-        "French West Indies",
-        "Gabon",
-        "Gambia",
-        "Georgia",
-        "Germany",
-        "Ghana",
-        "Gibraltar",
-        "Greece",
-        "Greenland",
-        "Hong Kong",
-        "Hungary",
-        "Iceland",
-        "India",
-        "Indonesia",
-        "Iran",
-        "Iraq",
-        "Ireland",
-        "Isle of Man",
-        "Israel",
-        "Italy",
-        "Kuwait",
-        "Kyrgyzstan",
-        "Laos",
-        "Latvia",
-        "Lebanon",
-        "Malta",
-        "Marshall Islands",
-        "Mauritania",
-        "Mauritius",
-        "Mexico",
-        "Micronesia",
-        "Moldova",
-        "Monaco",
-        "Mongolia",
-        "Montenegro",
-        "Montserrat",
-        "Peru",
-        "Philippines",
-        "Poland",
-        "Portugal",
-        "Puerto Rico",
-        "Qatar",
-        "Reunion",
-        "Romania",
-        "Russia",
-        "South Korea",
-        "South Sudan",
-        "Spain",
-        "Sri Lanka",
-        "St Kitts & Nevis",
-        "St Lucia",
-        "St Vincent",
-        "Sudan",
-        "Suriname",
-        "Swaziland",
-        "Sweden",
-        "Switzerland",
-        "Syria",
-        "Taiwan",
-        "Yemen",
-        "Zambia",
-        "Zimbabwe",
-      ];
-      autocomplete(document.getElementById("firstRoad"), suggestions);
-      autocomplete(document.getElementById("secondRoad"), suggestions);
-      autocomplete(document.getElementById("RoadNames"), suggestions);
-      autocomplete(document.getElementById("Quarter"), suggestions);
-      autocomplete(document.getElementById("Section"), suggestions);
-      autocomplete(document.getElementById("TWP"), suggestions);
-      autocomplete(document.getElementById("Rge"), suggestions);
-      autocomplete(document.getElementById("House"), suggestions);
-      autocomplete(document.getElementById("RoadName"), suggestions);
-      autocomplete(document.getElementById("firstName"), suggestions);
-      autocomplete(document.getElementById("secondName"), suggestions);
-      autocomplete(document.getElementById("rollNo"), suggestions);
-    }
-
     function getCustomWidgetHTML() {
-      return `<div>
+      return ` <div>
     <div id="viewDiv"></div>
     <div id="searchWidgetDiv" class="searchWidgetContainer card">
-      <form onsubmit="return false;" autocomplete="off">
+      <form onsubmit="return false;">
         <button class="collapsible" onclick="return false;" id="GetExtentByIntersection">Search By Intersection</button>
         <div class="content">
-          <div class="searchInputDiv autocomplete autocomplete">
+          <div class="searchInputDiv">
             <label for="firstRoad">First Road</label>
             <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
           </div>
-          <div class="searchInputDiv autocomplete">
+          <div class="searchInputDiv">
             <label for="secondRoad">Second Road</label>
             <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentRoadNames">Search By Road Name</button>
         <div class="content">
-          <div class="searchInputDiv autocomplete">
+          <div class="searchInputDiv">
             <label for="RoadName">Type Road Name</label>
             <input class="input-field" type="text" id="RoadNames" name="RoadName" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentByLegal">Search By Legal Desc</button>
         <div class="content">
-          <div class="descInputDiv autocomplete">
+          <div class="descInputDiv">
             <label for="Quarter">Quarter</label>
             <input class="input-field desc-field" type="text" id="Quarter" name="Quarter" placeholder="">
           </div>
-          <div class="descInputDiv autocomplete">
+          <div class="descInputDiv">
             <label for="Section">Section</label>
             <input class="input-field desc-field" type="text" id="Section" name="Section" placeholder="">
           </div>
-          <div class="descInputDiv autocomplete">
+          <div class="descInputDiv">
             <label for="TWP">TWP</label>
             <input class="input-field desc-field" type="text" id="TWP" name="TWP" placeholder="">
           </div>
-          <div class="descInputDiv autocomplete">
+          <div class="descInputDiv">
             <label for="Rge">Rge</label>
             <input class="input-field desc-field" type="text" id="Rge" name="Rge" placeholder="">
           </div>
         </div>
-        <button class="collapsible" onclick="return false;" id="GetExtentByMunAddress">Search By Municipal
-          Address</button>
+        <button class="collapsible" onclick="return false;" id="GetExtentByMunAddress">Search By Municipal Address</button>
         <div class="content">
-          <div class="searchInputDiv autocomplete">
+          <div class="searchInputDiv">
             <label for="House">House No.</label>
             <input class="input-field" type="text" id="House" name="House" placeholder="">
           </div>
-          <div class="searchInputDiv autocomplete">
+          <div class="searchInputDiv">
             <label for="RoadName">Road Name</label>
             <input class="input-field" type="text" id="RoadName" name="RoadName" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentByOwner">Search By Owner</button>
         <div class="content">
-          <div class="searchInputDiv autocomplete">
+          <div class="searchInputDiv">
             <label for="firstName">First Name</label>
             <input class="input-field" type="text" id="firstName" name="firstName" placeholder="">
           </div>
-          <div class="searchInputDiv autocomplete">
+          <div class="searchInputDiv">
             <label for="secondName">Last Name</label>
             <input class="input-field" type="text" id="secondName" name="secondName" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentByRoll">Search By Roll</button>
         <div class="content">
-          <div class="searchInputDiv autocomplete">
+          <div class="searchInputDiv">
             <label for="rollNo">Type Roll Number</label>
             <input class="input-field" type="text" id="rollNo" name="rollNo" placeholder="">
           </div>
@@ -697,112 +595,6 @@ define([
       </form>
     </div>
   </div>`;
-    }
-
-    function autocomplete(inp, arr) {
-      /*the autocomplete function takes two arguments,
-  the text field element and an array of possible autocompleted values:*/
-      var currentFocus;
-      /*execute a function when someone writes in the text field:*/
-      inp.addEventListener("input", function (e) {
-        inp.parentElement.parentElement.style.overflow = "unset";
-        var a,
-          b,
-          i,
-          val = this.value;
-        /*close any already open lists of autocompleted values*/
-        closeAllLists();
-        if (!val) {
-          return false;
-        }
-        currentFocus = -1;
-        /*create a DIV element that will contain the items (values):*/
-        a = document.createElement("DIV");
-        a.setAttribute("id", this.id + "autocomplete-list");
-        a.setAttribute("class", "autocomplete-items");
-        /*append the DIV element as a child of the autocomplete container:*/
-        this.parentNode.appendChild(a);
-        /*for each item in the array...*/
-        for (i = 0; i < arr.length; i++) {
-          /*check if the item starts with the same letters as the text field value:*/
-          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-            /*create a DIV element for each matching element:*/
-            b = document.createElement("DIV");
-            /*make the matching letters bold:*/
-            b.innerHTML =
-              "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-            b.innerHTML += arr[i].substr(val.length);
-            /*insert a input field that will hold the current array item's value:*/
-            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-            /*execute a function when someone clicks on the item value (DIV element):*/
-            b.addEventListener("click", function (e) {
-              /*insert the value for the autocomplete text field:*/
-              inp.value = this.getElementsByTagName("input")[0].value;
-              /*close the list of autocompleted values,
-              (or any other open lists of autocompleted values:*/
-              closeAllLists();
-            });
-            a.appendChild(b);
-          }
-        }
-      });
-      /*execute a function presses a key on the keyboard:*/
-      inp.addEventListener("keydown", function (e) {
-        var x = document.getElementById(this.id + "autocomplete-list");
-        if (x) x = x.getElementsByTagName("div");
-        if (e.keyCode == 40) {
-          /*If the arrow DOWN key is pressed,
-        increase the currentFocus variable:*/
-          currentFocus++;
-          /*and and make the current item more visible:*/
-          addActive(x);
-        } else if (e.keyCode == 38) {
-          //up
-          /*If the arrow UP key is pressed,
-        decrease the currentFocus variable:*/
-          currentFocus--;
-          /*and and make the current item more visible:*/
-          addActive(x);
-        } else if (e.keyCode == 13) {
-          /*If the ENTER key is pressed, prevent the form from being submitted,*/
-          e.preventDefault();
-          if (currentFocus > -1) {
-            /*and simulate a click on the "active" item:*/
-            if (x) x[currentFocus].click();
-          }
-        }
-      });
-      function addActive(x) {
-        /*a function to classify an item as "active":*/
-        if (!x) return false;
-        /*start by removing the "active" class on all items:*/
-        removeActive(x);
-        if (currentFocus >= x.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = x.length - 1;
-        /*add class "autocomplete-active":*/
-        x[currentFocus].classList.add("autocomplete-active");
-      }
-      function removeActive(x) {
-        /*a function to remove the "active" class from all autocomplete items:*/
-        x.parentElement.parentElement.style.overflow = "hidden";
-        for (var i = 0; i < x.length; i++) {
-          x[i].classList.remove("autocomplete-active");
-        }
-      }
-      function closeAllLists(elmnt) {
-        /*close all autocomplete lists in the document,
-    except the one passed as an argument:*/
-        var x = document.getElementsByClassName("autocomplete-items");
-        for (var i = 0; i < x.length; i++) {
-          if (elmnt != x[i] && elmnt != inp) {
-            x[i].parentNode.removeChild(x[i]);
-          }
-        }
-      }
-      /*execute a function when someone clicks in the document:*/
-      document.addEventListener("click", function (e) {
-        closeAllLists(e.target);
-      });
     }
   };
 });
