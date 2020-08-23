@@ -162,6 +162,10 @@ define([
       }
     };
 
+    function isValidCoordinates(coordinates) {
+      return !!coordinates.filter((x) => x !== undefined).length;
+    }
+
     function GetExtentByIntersection(firstRoad, secondRoad) {
       //DEWITTSPOND PANORAMARD
       firstRoad = removeSpaces(firstRoad).toUpperCase();
@@ -183,6 +187,12 @@ define([
             parseFloat(coord)
           );
           console.log([xCoord, yCoord]);
+
+          if (!isValidCoordinates([xCoord, yCoord])) {
+            console.log("The returned result is invalid.");
+            return;
+          }
+
           var extent = new Extent(
             xCoord - 150,
             yCoord - 50,
@@ -219,6 +229,10 @@ define([
             parseFloat(coord)
           );
           console.log([xCoord, yCoord]);
+          if (!isValidCoordinates([xCoord, yCoord])) {
+            console.log("The returned result is invalid.");
+            return;
+          }
           var extent = new Extent(
             xCoord - 1600,
             yCoord - 1600,
@@ -258,6 +272,11 @@ define([
           var yCoord = parseFloat(
             xmlDoc.getElementsByTagName("a:decY")[0].childNodes[0].nodeValue
           );
+
+          if (!isValidCoordinates([xCoord, yCoord])) {
+            console.log("The returned result is invalid.");
+            return;
+          }
 
           var extent = new Extent(
             xCoord - 120,
@@ -306,6 +325,10 @@ define([
           // xmlDoc.getElementsByTagName("a:OwnershipType")[0].childNodes[0].nodeValue;
           // xmlDoc.getElementsByTagName("a:Roll")[0].childNodes[0].nodeValue;
           console.log([xCoord, yCoord]);
+          if (!isValidCoordinates([xCoord, yCoord])) {
+            console.log("The returned result is invalid.");
+            return;
+          }
           var extent = new Extent(
             xCoord - 150,
             yCoord - 50,
@@ -353,6 +376,10 @@ define([
           );
 
           console.log([xCoord, yCoord]);
+          if (!isValidCoordinates([xCoord, yCoord])) {
+            console.log("The returned result is invalid.");
+            return;
+          }
           var extent = new Extent(
             xCoord - 160,
             yCoord - 100,
@@ -391,6 +418,18 @@ define([
 
           let mymap = proxy.map.get();
           let wkid = mymap.spatialReference.latestWkid;
+
+          if (
+            !isValidCoordinates([
+              xCoordLeft,
+              yCoordLeft,
+              xCoordRight,
+              yCoordRight,
+            ])
+          ) {
+            console.log("The returned result is invalid.");
+            return;
+          }
 
           var extent = new Extent(
             xCoordLeft,
