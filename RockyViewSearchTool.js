@@ -77,7 +77,7 @@ define([
           if (content.style.maxHeight) {
             content.style.maxHeight = null;
           } else {
-            content.style.maxHeight = content.scrollHeight + "px";
+            content.style.maxHeight = content.scrollHeight + 5 + "px";
           }
         });
       }
@@ -95,6 +95,8 @@ define([
           query += inputs[i].value + " ";
         }
         console.log(query);
+
+        if (query.length < 1) return;
 
         switch (queryField) {
           case "GetExtentByIntersection":
@@ -139,7 +141,12 @@ define([
     function zoomTo(extent) {
       var mymap = proxy.map.get();
       mymap.extent = extent;
+      mymap.width = mymap.width - 1;
     }
+
+    // function zoomToExtent(){
+    //     console.log("zoomToExtent");
+    // }
 
     this.show = function () {
       if (!initialized) {
@@ -148,6 +155,7 @@ define([
         displayPanel = proxy.layout.createTrailingPanel(uiConfig);
         onload();
         // zoomTo();
+        // _dojo.connect(proxy.map.get(), "onExtentChange", zoomToExtent);
         selectChild();
       } else {
         selectChild();
@@ -188,7 +196,7 @@ define([
             x: xCoord,
             y: yCoord,
           };
-          addSymbolMarker(point);
+          addSymbolDeffered(point);
         } else {
           console.log("err!");
         }
@@ -263,7 +271,7 @@ define([
             x: xCoord,
             y: yCoord,
           };
-          addSymbolMarker(point);
+          addSymbolDeffered(point);
         } else {
           console.log("err!", this.response); // user not found
         }
@@ -307,11 +315,12 @@ define([
           );
           console.log(extent);
           zoomTo(extent);
+
           let point = {
             x: xCoord,
             y: yCoord,
           };
-          addSymbolMarker(point);
+          addSymbolDeffered(point);
         } else {
           console.log("err!");
         }
@@ -421,6 +430,13 @@ define([
         markerSymbol.size = 45;
         return markerSymbol;
       }
+    }
+
+    function addSymbolDeffered(point) {
+      setTimeout(function () {
+        proxy.map.get().width = proxy.map.get().width + 1;
+        addSymbolMarker(point);
+      }, 500);
     }
 
     function xmlParser(xmlString, tag) {

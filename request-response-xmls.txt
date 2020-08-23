@@ -1,0 +1,134 @@
+"http://tempuri.org/ISearch/GetExtentRoadNames"
+
+<s:Envelope
+    xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+        <GetExtentRoadNames
+            xmlns="http://tempuri.org/">
+            <roadName>ANDREWHEIGHTSPL</roadName>
+        </GetExtentRoadNames>
+    </s:Body>
+</s:Envelope>
+<s:Envelope
+    xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+        <GetExtentRoadNamesResponse
+            xmlns="http://tempuri.org/">
+            <GetExtentRoadNamesResult
+                xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays"
+                xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                <a:double>-22116.465</a:double>  "-22116.465", "5658724.99","-21845.465","5658726.99"
+                <a:double>5658724.99</a:double>
+                <a:double>-21845.465</a:double>
+                <a:double>5658726.99</a:double>
+            </GetExtentRoadNamesResult>
+        </GetExtentRoadNamesResponse>
+    </s:Body>
+</s:Envelope>
+-------------------------------------------------
+
+inputs
+
+<s:Envelope
+    xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+        <GetExtentByIntersection
+            xmlns="http://tempuri.org/">
+            <firstRoad>VALEVIEWRD</firstRoad>
+            <secondRoad>SECHWY560</secondRoad>
+        </GetExtentByIntersection>
+    </s:Body>
+</s:Envelope>
+
+Response
+
+<s:Envelope
+    xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+        <GetExtentByIntersectionResponse
+            xmlns="http://tempuri.org/">
+            <GetExtentByIntersectionResult
+                xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays"
+                xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                <a:string>20875.45600</a:string>
+                <a:string>5649268.33200</a:string>
+            </GetExtentByIntersectionResult>
+        </GetExtentByIntersectionResponse>
+    </s:Body>
+</s:Envelope>
+
+
+-------------------------------------------------
+"http://tempuri.org/ISearch/GetExtentByLegal"
+
+
+<s:Envelope
+    xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+        <GetExtentByLegal
+            xmlns="http://tempuri.org/">
+            <legal>NE-11-23-28</legal>
+        </GetExtentByLegal>
+    </s:Body>
+</s:Envelope>
+<s:Envelope
+    xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+        <GetExtentByLegalResponse
+            xmlns="http://tempuri.org/">
+            <GetExtentByLegalResult
+                xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays"
+                xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                <a:double>13258.635</a:double>
+                <a:double>5644939.293</a:double>
+                <a:double>14650.976</a:double>
+                <a:double>5646319.075</a:double>
+            </GetExtentByLegalResult>
+        </GetExtentByLegalResponse>
+    </s:Body>
+</s:Envelope>
+
+-----------------------------------------------
+"http://tempuri.org/ISearch/GetExtentByMunAddress"
+
+
+<s:Envelope
+    xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+        <GetExtentByMunAddress
+            xmlns="http://tempuri.org/">
+            <houseNum>262075</houseNum>
+            <roadName>ROCKY VIEW POINT</roadName>
+        </GetExtentByMunAddress>
+    </s:Body>
+</s:Envelope>
+<s:Envelope
+    xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+        <GetExtentByMunAddressResponse
+            xmlns="http://tempuri.org/">
+            <GetExtentByMunAddressResult
+                xmlns:a="http://schemas.datacontract.org/2004/07/CityWorks.Domain"
+                xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                <a:spGetXYCoordByMunicipalAddress_Result>
+                    <a:Address>262075 ROCKY VIEW POINT</a:Address>
+                    <a:ID>147729</a:ID>
+                    <a:decX>4186.05010000</a:decX>
+                    <a:decY>5675612.05520000</a:decY>
+                </a:spGetXYCoordByMunicipalAddress_Result>
+            </GetExtentByMunAddressResult>
+        </GetExtentByMunAddressResponse>
+    </s:Body>
+</s:Envelope>
+
+----------------------------------------------
+
+        // <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+        //   <s:Body>
+        //     <GetRoll xmlns="http://tempuri.org/">
+        //       <roll>03223504</roll>
+        //     </GetRoll>
+        //   </s:Body>
+        // </s:Envelope>;
+
+        <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentByRollResponse xmlns="http://tempuri.org/"><GetExtentByRollResult xmlns:a="http://schemas.datacontract.org/2004/07/CityWorks.Domain" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><a:spGetExtentByRoll_Result><a:DecX>23297.03458094</a:DecX><a:DecY>5648385.9141837</a:DecY><a:Roll>03223504</a:Roll></a:spGetExtentByRoll_Result></GetExtentByRollResult></GetExtentByRollResponse></s:Body></s:Envelope>

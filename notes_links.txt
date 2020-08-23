@@ -105,7 +105,7 @@ xmlString =
 
 parser = new DOMParser();
 xmlDoc = parser.parseFromString(xmlString, "text/xml");
-
+xmlDoc.getElementsByTagName("a:double")[0].childNodes[0].nodeValue;
 document.getElementById("demo").innerHTML = xmlDoc.getElementsByTagName(
   "roadName"
 )[0].childNodes[0].nodeValue;
