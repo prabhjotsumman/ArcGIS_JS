@@ -27,9 +27,13 @@
 <body>
   <div>
     <div id="viewDiv"></div>
+    <div id="openSearchWidgetDiv" onclick="toggetCustomSearchWidget()"><i class="search-icon fa fa-search"></i></div>
     <div id="searchWidgetDiv" class="searchWidgetContainer card">
-      <form onsubmit="return false;">
-        <button class="collapsible" onclick="return false;" id="SearchByIntersectionID">Search By Intersection</button>
+      <div id="boxTitle" class="box-title">Rocky View
+        <div class="btn-close" onclick="closeWidget();"></div>
+      </div>
+      <form onsubmit="search(); return false;">
+        <button class="collapsible" onclick="return false;">Search By Intersection</button>
         <div class="content">
           <div class="searchInputDiv">
             <label for="firstRoad">First Road</label>
@@ -43,60 +47,60 @@
         <button class="collapsible" onclick="return false;">Search By Road Name</button>
         <div class="content">
           <div class="searchInputDiv">
-            <label for="RoadName">Type Road Name</label>
-            <input class="input-field" type="text" id="RoadName" name="RoadName" placeholder="">
+            <label for="firstRoad">Type Road Name</label>
+            <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;">Search By Legal Desc</button>
         <div class="content">
           <div class="descInputDiv">
-            <label for="Quarter">Quarter</label>
-            <input class="input-field desc-field" type="text" id="Quarter" name="Quarter" placeholder="">
+            <label for="firstRoad">Quarter</label>
+            <input class="input-field desc-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
           </div>
           <div class="descInputDiv">
-            <label for="Section">Section</label>
-            <input class="input-field desc-field" type="text" id="Section" name="Section" placeholder="">
+            <label for="secondRoad">Section</label>
+            <input class="input-field desc-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
           </div>
           <div class="descInputDiv">
-            <label for="TWP">TWP</label>
-            <input class="input-field desc-field" type="text" id="TWP" name="TWP" placeholder="">
+            <label for="firstRoad">TWP</label>
+            <input class="input-field desc-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
           </div>
           <div class="descInputDiv">
-            <label for="Rge">Rge</label>
-            <input class="input-field desc-field" type="text" id="Rge" name="Rge" placeholder="">
+            <label for="secondRoad">Rge</label>
+            <input class="input-field desc-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;">Search By Municipal Address</button>
         <div class="content">
           <div class="searchInputDiv">
-            <label for="House">House No.</label>
-            <input class="input-field" type="text" id="House" name="House" placeholder="">
+            <label for="firstRoad">House No.</label>
+            <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
           </div>
           <div class="searchInputDiv">
-            <label for="RoadName">Road Name</label>
-            <input class="input-field" type="text" id="RoadName" name="RoadName" placeholder="">
+            <label for="secondRoad">Road Name</label>
+            <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;">Search By Owner</button>
         <div class="content">
           <div class="searchInputDiv">
-            <label for="firstName">First Name</label>
-            <input class="input-field" type="text" id="firstName" name="firstName" placeholder="">
+            <label for="firstRoad">First Name</label>
+            <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
           </div>
           <div class="searchInputDiv">
-            <label for="secondName">Last Name</label>
-            <input class="input-field" type="text" id="secondName" name="secondName" placeholder="">
+            <label for="secondRoad">Second Name</label>
+            <input class="input-field" type="text" id="secondRoad" name="secondRoad" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;">Search By Roll</button>
         <div class="content">
           <div class="searchInputDiv">
-            <label for="rollNo">Type Roll Number</label>
-            <input class="input-field" type="text" id="rollNo" name="rollNo" placeholder="">
+            <label for="firstRoad">Type Roll Number</label>
+            <input class="input-field" type="text" id="firstRoad" name="firstRoad" placeholder="">
           </div>
         </div>
         <div class="search-btn-div">
-          <button class="btn-search" id="searchButton" role="submit" type="submit" onclick="search()">Search</button>
+          <button class="btn-search" id="searchButton" role="submit" type="submit">Search</button>
         </div>
       </form>
     </div>

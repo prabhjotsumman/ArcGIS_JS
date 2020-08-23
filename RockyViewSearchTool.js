@@ -115,11 +115,14 @@ define([
             break;
 
           case "GetExtentByOwner":
-            GetExtentByOwner();
+            let firstName = inputs[0].value;
+            let lastName = inputs[1].value;
+            GetExtentByOwner(firstName, lastName);
             break;
 
           case "GetExtentByRoll":
-            GetExtentByRoll();
+            let rollNo = inputs[0].value;
+            GetExtentByRoll(rollNo);
             break;
 
           case "GetExtentRoadNames":
@@ -152,17 +155,12 @@ define([
     };
 
     function GetExtentByIntersection(firstRoad, secondRoad) {
+      //DEWITTSPOND PANORAMARD
       firstRoad = removeSpaces(firstRoad).toUpperCase();
       secondRoad = removeSpaces(secondRoad).toUpperCase();
 
-      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
-          <s:Body>
-            <GetExtentByIntersection xmlns="http://tempuri.org/">
-              <firstRoad>${firstRoad}</firstRoad>
-              <secondRoad>${secondRoad}</secondRoad>
-            </GetExtentByIntersection>
-          </s:Body>
-        </s:Envelope>;`;
+      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentByIntersection xmlns="http://tempuri.org/"><firstRoad>${firstRoad}</firstRoad><secondRoad>${secondRoad}</secondRoad></GetExtentByIntersection></s:Body></s:Envelope>`;
+      console.log("Req:", XMLRequestString);
 
       var XMLRequest = getDataFromWCFService({
         XMLRequestString,
@@ -178,28 +176,27 @@ define([
           );
           console.log([xCoord, yCoord]);
           var extent = new Extent(
-            xCoord - 100,
-            yCoord - 100,
-            xCoord + 100,
-            yCoord + 100,
+            xCoord - 150,
+            yCoord - 50,
+            xCoord + 150,
+            yCoord + 80,
             new SpatialReference({ wkid: 4326 })
           );
           console.log(extent);
           zoomTo(extent);
+          let point = {
+            x: xCoord,
+            y: yCoord,
+          };
+          addSymbolMarker(point);
         } else {
-          console.log("err!", this.response);
+          console.log("err!");
         }
       };
     }
     function GetExtentByLegal(legal) {
       //NE-11-23-28
-      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
-          <s:Body>
-            <GetExtentByLegal xmlns="http://tempuri.org/">
-              <legal>${legal}</legal>
-            </GetExtentByLegal>
-          </s:Body>
-        </s:Envelope>`;
+      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentByLegal xmlns="http://tempuri.org/"><legal>${legal}</legal></GetExtentByLegal></s:Body></s:Envelope>`;
 
       var XMLRequest = getDataFromWCFService({
         XMLRequestString,
@@ -215,10 +212,10 @@ define([
           );
           console.log([xCoord, yCoord]);
           var extent = new Extent(
-            xCoord - 100,
-            yCoord - 100,
-            xCoord + 100,
-            yCoord + 100,
+            xCoord - 1600,
+            yCoord - 1600,
+            xCoord + 1600,
+            yCoord + 1600,
             new SpatialReference({ wkid: 4326 })
           );
           console.log(extent);
@@ -231,14 +228,7 @@ define([
     function GetExtentByMunAddress(houseNum, roadName) {
       // <houseNum>262075</houseNum>
       // <roadName>ROCKY VIEW POINT</roadName>
-      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
-          <s:Body>
-            <GetExtentByMunAddress xmlns="http://tempuri.org/">
-              <houseNum>${houseNum}</houseNum>
-              <roadName>${roadName}</roadName>
-            </GetExtentByMunAddress>
-          </s:Body>
-        </s:Envelope>;`;
+      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentByMunAddress xmlns="http://tempuri.org/"><houseNum>${houseNum}</houseNum><roadName>${roadName}</roadName></GetExtentByMunAddress></s:Body></s:Envelope>`;
 
       var XMLRequest = getDataFromWCFService({
         XMLRequestString,
@@ -261,29 +251,113 @@ define([
             xmlDoc.getElementsByTagName("a:decY")[0].childNodes[0].nodeValue
           );
 
-          // <a:spGetXYCoordByMunicipalAddress_Result>
-          //   <a:Address>262075 ROCKY VIEW POINT</a:Address>
-          //   <a:ID>147729</a:ID>
-          //   <a:decX>4186.05010000</a:decX>
-          //   <a:decY>5675612.05520000</a:decY>
-          // </a:spGetXYCoordByMunicipalAddress_Result>;
-
           var extent = new Extent(
-            xCoord - 100,
+            xCoord - 120,
             yCoord - 100,
-            xCoord + 100,
+            xCoord + 120,
             yCoord + 100,
             new SpatialReference({ wkid: 4326 })
           );
+          zoomTo(extent);
+          let point = {
+            x: xCoord,
+            y: yCoord,
+          };
+          addSymbolMarker(point);
+        } else {
+          console.log("err!", this.response); // user not found
+        }
+      };
+    }
+    function GetExtentByOwner(firstName, lastName) {
+      firstName = removeSpaces(firstName).toUpperCase();
+      lastName = removeSpaces(lastName).toUpperCase();
+
+      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentByOwner xmlns="http://tempuri.org/"><Owner>${lastName},%${firstName}</Owner></GetExtentByOwner></s:Body></s:Envelope>`;
+      console.log("Req:", XMLRequestString);
+
+      var XMLRequest = getDataFromWCFService({
+        XMLRequestString,
+        SOAPAction: "GetExtentByOwner",
+      });
+
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          var parser = new DOMParser();
+          let xmlDoc = parser.parseFromString(XMLString, "text/xml");
+
+          var xCoord = parseFloat(
+            xmlDoc.getElementsByTagName("a:DecX")[0].childNodes[0].nodeValue
+          );
+          var yCoord = parseFloat(
+            xmlDoc.getElementsByTagName("a:DecY")[0].childNodes[0].nodeValue
+          );
+          // xmlDoc.getElementsByTagName("a:Owner")[0].childNodes[0].nodeValue;
+          // xmlDoc.getElementsByTagName("a:OwnershipType")[0].childNodes[0].nodeValue;
+          // xmlDoc.getElementsByTagName("a:Roll")[0].childNodes[0].nodeValue;
+          console.log([xCoord, yCoord]);
+          var extent = new Extent(
+            xCoord - 150,
+            yCoord - 50,
+            xCoord + 150,
+            yCoord + 80,
+            new SpatialReference({ wkid: 4326 })
+          );
+          console.log(extent);
+          zoomTo(extent);
+          let point = {
+            x: xCoord,
+            y: yCoord,
+          };
+          addSymbolMarker(point);
+        } else {
+          console.log("err!");
+        }
+      };
+    }
+
+    function GetExtentByRoll(rollNo) {
+      //03223504
+      rollNo = removeSpaces(rollNo);
+
+      var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentByRoll xmlns="http://tempuri.org/"><roll>${rollNo}</roll></GetExtentByRoll></s:Body></s:Envelope>`;
+
+      var XMLRequest = getDataFromWCFService({
+        XMLRequestString,
+        SOAPAction: "GetExtentByRoll",
+      });
+
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          var parser = new DOMParser();
+          let xmlDoc = parser.parseFromString(XMLString, "text/xml");
+
+          var xCoord = parseFloat(
+            xmlDoc.getElementsByTagName("a:DecX")[0].childNodes[0].nodeValue
+          );
+          var yCoord = parseFloat(
+            xmlDoc.getElementsByTagName("a:DecY")[0].childNodes[0].nodeValue
+          );
+
+          console.log([xCoord, yCoord]);
+          var extent = new Extent(
+            xCoord - 160,
+            yCoord - 100,
+            xCoord + 160,
+            yCoord + 100,
+            new SpatialReference({ wkid: 4326 })
+          );
+          console.log(extent);
           zoomTo(extent);
         } else {
           console.log("err!", this.response); // user not found
         }
       };
     }
-    function GetExtentByOwner() {}
-
-    function GetExtentByRoll() {}
 
     function GetExtentRoadNames(roadName) {
       roadName = removeSpaces(roadName).toUpperCase();
@@ -294,21 +368,10 @@ define([
         SOAPAction: "GetExtentRoadNames",
       });
 
-      var extenttest = new Extent(
-        -22116.465,
-        5658724.99,
-        -21845.465,
-        5658726.99,
-        new SpatialReference({ wkid: 4326 })
-      );
-      console.log("Extent:", extenttest);
-
-      zoomTo(extenttest);
-
       XMLRequest.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
           console.log("DATA:", this.response);
-          let XMLString = XMLResponse.response;
+          let XMLString = this.response;
           let coordinates = xmlParser(XMLString, "a:double");
           let [
             xCoordLeft,
@@ -316,22 +379,19 @@ define([
             xCoordRight,
             yCoordRight,
           ] = coordinates.map((coord) => parseFloat(coord));
-          console.log("Got response back,", coordinates);
-          console.log(
-            "Got response back::,",
-            xCoordLeft,
-            yCoordLeft,
-            xCoordRight,
-            yCoordRight
-          );
+
+          let mymap = proxy.map.get();
+          let wkid = mymap.spatialReference.latestWkid;
+
           var extent = new Extent(
             xCoordLeft,
             yCoordLeft,
             xCoordRight,
             yCoordRight,
-            new SpatialReference({ wkid: 4326 })
+            new SpatialReference({ wkid })
           );
           console.log("Extent:", extent);
+          console.log("Mymap:", mymap);
           zoomTo(extent);
         } else {
           console.log("err!"); // user not found
@@ -339,24 +399,26 @@ define([
       };
     }
 
-    function addSymbolMarker() {
+    function addSymbolMarker(point) {
       var iconPath =
-        "M24.0,2.199C11.9595,2.199,2.199,11.9595,2.199,24.0c0.0,12.0405,9.7605,21.801,21.801,21.801c12.0405,0.0,21.801-9.7605,21.801-21.801C45.801,11.9595,36.0405,2.199,24.0,2.199zM31.0935,11.0625c1.401,0.0,2.532,2.2245,2.532,4.968S32.4915,21.0,31.0935,21.0c-1.398,0.0-2.532-2.2245-2.532-4.968S29.697,11.0625,31.0935,11.0625zM16.656,11.0625c1.398,0.0,2.532,2.2245,2.532,4.968S18.0555,21.0,16.656,21.0s-2.532-2.2245-2.532-4.968S15.258,11.0625,16.656,11.0625zM24.0315,39.0c-4.3095,0.0-8.3445-2.6355-11.8185-7.2165c3.5955,2.346,7.5315,3.654,11.661,3.654c4.3845,0.0,8.5515-1.47,12.3225-4.101C32.649,36.198,28.485,39.0,24.0315,39.0z";
+        "M256,0.122C148.624,0.122,61.046,87.7,61.046,195.076c0,42.589,13.496,83.079,38.992,116.971 l143.964,193.955C246.099,509,251.8,512,256,512c4.5,0,9.9-3.299,11.998-5.999c0.597-0.901,145.464-196.054,146.665-197.854 c0.3,0,0.3,0,0.3-0.298c23.395-32.993,35.99-71.984,35.99-112.773C450.954,87.701,363.376,0.122,256,0.122z M256,300.051 c-57.884,0-104.975-47.089-104.975-104.975S198.116,90.101,256,90.101s104.975,47.089,104.975,104.975S313.884,300.051,256,300.051z";
 
-      var initColor = "#ce641d";
-      let point = { x: -22116.465, y: 5658724.99 };
+      var initColor = "#ff0000";
       var graphic = new Graphic(
         new Point(point),
         createSymbol(iconPath, initColor)
       );
-      var map = proxy.map.get();
+
+      console.log("Graphic", graphic);
+      map = proxy.map.get();
       map.graphics.add(graphic);
 
       function createSymbol(path, color) {
         var markerSymbol = new SimpleMarkerSymbol();
         markerSymbol.setPath(path);
-        markerSymbol.setColor(new dojo.Color(color));
+        markerSymbol.setColor(new _dojo.Color(color));
         markerSymbol.setOutline(null);
+        markerSymbol.size = 45;
         return markerSymbol;
       }
     }
@@ -368,7 +430,7 @@ define([
       var nodes = xmlDoc.getElementsByTagName(tag);
       var coordinates = [];
       for (var i = 0; i < nodes.length; i++) {
-        values.push(nodes[i].childNodes[0].nodeValue);
+        coordinates.push(nodes[i].childNodes[0].nodeValue);
       }
       return coordinates;
     }
@@ -420,7 +482,7 @@ define([
         <div class="content">
           <div class="searchInputDiv">
             <label for="RoadName">Type Road Name</label>
-            <input class="input-field" type="text" id="RoadName" name="RoadName" placeholder="">
+            <input class="input-field" type="text" id="RoadNames" name="RoadName" placeholder="">
           </div>
         </div>
         <button class="collapsible" onclick="return false;" id="GetExtentByLegal">Search By Legal Desc</button>
