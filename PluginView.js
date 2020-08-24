@@ -165,6 +165,11 @@ window.onload = () => {
     inputElements[i].onclick = function (e) {
       this.focus();
     };
+
+    inputElements[i].oninput = function(e) {
+      console.log(e.target.dataset.box);
+      console.log(e.target.value);
+    }
   }
 };
 

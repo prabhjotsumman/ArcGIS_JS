@@ -1,5 +1,6 @@
 define([
   "dojo",
+  "dojo/when",
   "esri/dijit/LocateButton",
   "esri/geometry/Extent",
   "esri/map",
@@ -12,6 +13,7 @@ define([
   "esri/SpatialReference",
 ], function (
   _dojo,
+  when,
   LocateButton,
   Extent,
   Map,
@@ -139,6 +141,14 @@ define([
             break;
         }
       });
+
+      let inputElements = document.querySelectorAll(".input-field");
+
+      for (let i = 0; i < inputElements.length; i++) {
+        inputElements[i].oninput = function (e) {
+          autoCompleteSuggestion(e.target);
+        };
+      }
     }
 
     function zoomTo(extent) {
@@ -531,30 +541,6 @@ define([
         "Bahamas",
         "Bahrain",
         "Bangladesh",
-        "Barbados",
-        "Belarus",
-        "Belgium",
-        "Estonia",
-        "Ethiopia",
-        "Falkland Islands",
-        "Faroe Islands",
-        "Fiji",
-        "Finland",
-        "France",
-        "French Polynesia",
-        "French West Indies",
-        "Gabon",
-        "Gambia",
-        "Georgia",
-        "Germany",
-        "Ghana",
-        "Gibraltar",
-        "Greece",
-        "Greenland",
-        "Hong Kong",
-        "Hungary",
-        "Iceland",
-        "India",
         "Indonesia",
         "Iran",
         "Iraq",
@@ -564,46 +550,6 @@ define([
         "Italy",
         "Kuwait",
         "Kyrgyzstan",
-        "Laos",
-        "Latvia",
-        "Lebanon",
-        "Malta",
-        "Marshall Islands",
-        "Mauritania",
-        "Mauritius",
-        "Mexico",
-        "Micronesia",
-        "Moldova",
-        "Monaco",
-        "Mongolia",
-        "Montenegro",
-        "Montserrat",
-        "Peru",
-        "Philippines",
-        "Poland",
-        "Portugal",
-        "Puerto Rico",
-        "Qatar",
-        "Reunion",
-        "Romania",
-        "Russia",
-        "South Korea",
-        "South Sudan",
-        "Spain",
-        "Sri Lanka",
-        "St Kitts & Nevis",
-        "St Lucia",
-        "St Vincent",
-        "Sudan",
-        "Suriname",
-        "Swaziland",
-        "Sweden",
-        "Switzerland",
-        "Syria",
-        "Taiwan",
-        "Yemen",
-        "Zambia",
-        "Zimbabwe",
       ];
       autocomplete(document.getElementById("firstRoad"), suggestions);
       autocomplete(document.getElementById("secondRoad"), suggestions);
@@ -616,7 +562,7 @@ define([
       autocomplete(document.getElementById("RoadName"), suggestions);
       autocomplete(document.getElementById("firstName"), suggestions);
       autocomplete(document.getElementById("secondName"), suggestions);
-      autocomplete(document.getElementById("rollNo"), suggestions);
+      //   autocomplete(document.getElementById("rollNo"), suggestions);
     }
 
     function getCustomWidgetHTML() {
@@ -699,50 +645,113 @@ define([
   </div>`;
     }
 
-    function GetExtentByIntersection_autoComplete(firstRoad, secondRoad){
-        let suggestions = [];
-        //req str
-        //get res
-        //put in array
-        return suggestions;
-    }
-    function GetExtentByLegal_autoComplete(legal){
-        let suggestions = [];
-        //req str
-        //get res
-        //put in array
-        return suggestions;
-    }
-    function GetExtentByMunAddress_autoComplete(houseNum, roadName){
-        let suggestions = [];
-        //req str
-        //get res
-        //put in array
-        return suggestions;
-    }
-    function GetExtentByOwner_autoComplete(firstName, lastName){
-        let suggestions = [];
-        //req str
-        //get res
-        //put in array
-        return suggestions;
-    }
-    function GetExtentByRoll_autoComplete(rollNo){
-        let suggestions = [03,031,021];
-        
-        //req str
-        let XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetRoll xmlns="http://tempuri.org/"><roll>${rollNo}</roll></GetRoll></s:Body></s:Envelope>`;
+    function autoCompleteSuggestion(inputElement) {
+      let inp = inputElement;
+      let searchBox = inputElement.dataset.searchbox;
+      // let value = inputElement.value;
 
-        //get res
-        //put in array
-        return suggestions;
+      switch (searchBox) {
+        case "GetExtentByIntersection":
+          let firstRoad = inp.value;
+          let secondRoad = inp.value;
+          GetExtentByIntersection_autoComplete(firstRoad, secondRoad);
+          break;
+
+        case "GetExtentByLegal":
+          let legal = query.split(" ").join("-").toUpperCase();
+          GetExtentByLegal_autoComplete(legal);
+          break;
+
+        case "GetExtentByMunAddress":
+          let houseNum = inp.value;
+          let roadName = inp.value;
+          GetExtentByMunAddress_autoComplete(houseNum, roadName);
+          break;
+
+        case "GetExtentByOwner":
+          let firstName = inp.value;
+          let lastName = inp.value;
+          GetExtentByOwner_autoComplete(firstName, lastName);
+          break;
+
+        case "GetExtentByRoll":
+          let rollNo = inp.value;
+          arr = GetExtentByRoll_autoComplete(inp, rollNo) || [];
+          console.log("ARr in fx", arr);
+          break;
+
+        case "GetExtentRoadNames":
+          let roadNames = query;
+          GetExtentRoadNames_autoComplete(roadNames);
+          break;
+
+        default:
+          break;
+      }
     }
-    function GetExtentRoadNames_autoComplete(roadNames){
-        let suggestions = [];
-        //req str
-        //get res
-        //put in array
-        return suggestions;
+
+    function GetExtentByIntersection_autoComplete(firstRoad, secondRoad) {
+      let suggestions = [];
+      //req str
+      //get res
+      //put in array
+      return suggestions;
+    }
+    function GetExtentByLegal_autoComplete(legal) {
+      let suggestions = [];
+      //req str
+      //get res
+      //put in array
+      return suggestions;
+    }
+    function GetExtentByMunAddress_autoComplete(houseNum, roadName) {
+      let suggestions = [];
+      //req str
+      //get res
+      //put in array
+      return suggestions;
+    }
+    function GetExtentByOwner_autoComplete(firstName, lastName) {
+      let suggestions = [];
+      //req str
+      //get res
+      //put in array
+      return suggestions;
+    }
+
+    function GetExtentByRoll_autoComplete(inp, rollNo) {
+      let XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetRoll xmlns="http://tempuri.org/"><roll>${rollNo}</roll></GetRoll></s:Body></s:Envelope>`;
+
+      //03223504
+      rollNo = removeSpaces(rollNo);
+
+      var XMLRequest = getDataFromWCFService({
+        XMLRequestString,
+        SOAPAction: "GetRoll",
+      });
+
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          let suggestions = [];
+
+          suggestions = xmlParser(XMLString, "a:string");
+
+          if (suggestions.length > 8) suggestions.length = 8;
+          autocomplete(inp, suggestions);
+        } else {
+          console.log("err!", this.response); // user not found
+        }
+      };
+    }
+
+    function GetExtentRoadNames_autoComplete(roadNames) {
+      let suggestions = [];
+      //req str
+      //get res
+      //put in array
+      return suggestions;
     }
 
     function autocomplete(inp, arr) {
@@ -759,50 +768,17 @@ define([
         /*close any already open lists of autocompleted values*/
         closeAllLists();
 
-        let inputID = inp.id;
-        let searchBox = inp.dataset.searchbox;
-        console.log("input: ", inp);
-        console.log("inputID: ", inputID);
-        console.log("searchBox: ", searchBox);
+        // let inputID = inp.id;
+        // let searchBox = inp.dataset.searchbox;
+        // let searchBox = "";
+        // console.log("input: ", inp);
+        // console.log("inputID: ", inputID);
+        // console.log("searchBox: ", searchBox);
 
-        switch (searchBox) {
-          case "GetExtentByIntersection":
-            let firstRoad = inp.value;
-            let secondRoad = inp.value;
-            GetExtentByIntersection_autoComplete(firstRoad, secondRoad);
-            break;
+        // let suggestions = [];
 
-          case "GetExtentByLegal":
-            let legal = query.split(" ").join("-").toUpperCase();
-            GetExtentByLegal_autoComplete(legal);
-            break;
-
-          case "GetExtentByMunAddress":
-            let houseNum = inp.value;
-            let roadName = inp.value;
-            GetExtentByMunAddress_autoComplete(houseNum, roadName);
-            break;
-
-          case "GetExtentByOwner":
-            let firstName = inp.value;
-            let lastName = inp.value;
-            GetExtentByOwner_autoComplete(firstName, lastName);
-            break;
-
-          case "GetExtentByRoll":
-            let rollNo = inp.value;
-            GetExtentByRoll_autoComplete(rollNo);
-            break;
-
-          case "GetExtentRoadNames":
-            let roadNames = query;
-            GetExtentRoadNames_autoComplete(roadNames);
-            break;
-
-          default:
-            break;
-        }
-
+        // arr = suggestions;
+        console.log("arr suggest", arr);
         if (!val) {
           return false;
         }
