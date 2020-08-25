@@ -532,37 +532,14 @@ define([
     }
 
     function initiateAutoComplete() {
-      var suggestions = [
-        "Afghanistan",
-        "Albania",
-        "Algeria",
-        "Andorra",
-        "Azerbaijan",
-        "Bahamas",
-        "Bahrain",
-        "Bangladesh",
-        "Indonesia",
-        "Iran",
-        "Iraq",
-        "Ireland",
-        "Isle of Man",
-        "Israel",
-        "Italy",
-        "Kuwait",
-        "Kyrgyzstan",
-      ];
-      autocomplete(document.getElementById("firstRoad"), suggestions);
-      autocomplete(document.getElementById("secondRoad"), suggestions);
-      autocomplete(document.getElementById("RoadNames"), suggestions);
-      autocomplete(document.getElementById("Quarter"), suggestions);
-      autocomplete(document.getElementById("Section"), suggestions);
-      autocomplete(document.getElementById("TWP"), suggestions);
-      autocomplete(document.getElementById("Rge"), suggestions);
-      autocomplete(document.getElementById("House"), suggestions);
-      autocomplete(document.getElementById("RoadName"), suggestions);
-      autocomplete(document.getElementById("firstName"), suggestions);
-      autocomplete(document.getElementById("secondName"), suggestions);
-      //   autocomplete(document.getElementById("rollNo"), suggestions);
+      let Quarter = ["NE", "NW", "SE", "SW"];
+      let Section = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"];
+      let TWP = ["21","22","23","24","25","26","27","28"];
+      let Rge = ["25","26","27","28","29","1","2","3","4","5"];
+      autocomplete(document.getElementById("Quarter"), Quarter);
+      autocomplete(document.getElementById("Section"), Section);
+      autocomplete(document.getElementById("TWP"), TWP);
+      autocomplete(document.getElementById("Rge"), Rge);
     }
 
     function getCustomWidgetHTML() {
@@ -648,7 +625,7 @@ define([
     function autoCompleteSuggestion(inputElement) {
       let inp = inputElement;
       let searchBox = inputElement.dataset.searchbox;
-      // let value = inputElement.value;
+      let query = inputElement.value;
 
       switch (searchBox) {
         case "GetExtentByIntersection":
@@ -657,9 +634,10 @@ define([
           GetExtentByIntersection_autoComplete(firstRoad, secondRoad);
           break;
 
-        case "GetExtentByLegal":
-          let legal = query.split(" ").join("-").toUpperCase();
-          GetExtentByLegal_autoComplete(legal);
+        case "GetExtentByLegal": //done
+          // let legal = query.split(" ").join("-").toUpperCase();
+          //handled in initialization, case written for completeness
+          GetExtentByLegal_autoComplete();
           break;
 
         case "GetExtentByMunAddress":
@@ -674,15 +652,14 @@ define([
           GetExtentByOwner_autoComplete(firstName, lastName);
           break;
 
-        case "GetExtentByRoll":
+        case "GetExtentByRoll": //done
           let rollNo = inp.value;
           arr = GetExtentByRoll_autoComplete(inp, rollNo) || [];
-          console.log("ARr in fx", arr);
           break;
 
-        case "GetExtentRoadNames":
+        case "GetExtentRoadNames": //done
           let roadNames = query;
-          GetExtentRoadNames_autoComplete(roadNames);
+          GetExtentRoadNames_autoComplete(inp, roadNames);
           break;
 
         default:
@@ -697,12 +674,8 @@ define([
       //put in array
       return suggestions;
     }
-    function GetExtentByLegal_autoComplete(legal) {
-      let suggestions = [];
-      //req str
-      //get res
-      //put in array
-      return suggestions;
+    function GetExtentByLegal_autoComplete() {
+      //written for completeness, already handled in initilization because of static values
     }
     function GetExtentByMunAddress_autoComplete(houseNum, roadName) {
       let suggestions = [];
@@ -738,7 +711,7 @@ define([
 
           suggestions = xmlParser(XMLString, "a:string");
 
-          if (suggestions.length > 8) suggestions.length = 8;
+          if (suggestions.length > 15) suggestions.length = 15;
           autocomplete(inp, suggestions);
         } else {
           console.log("err!", this.response); // user not found
@@ -746,12 +719,31 @@ define([
       };
     }
 
-    function GetExtentRoadNames_autoComplete(roadNames) {
-      let suggestions = [];
-      //req str
-      //get res
-      //put in array
-      return suggestions;
+    function GetExtentRoadNames_autoComplete(inp, roadNames) {
+      let XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetRoadNameForRoadnet xmlns="http://tempuri.org/"><roadName>${roadNames}</roadName></GetRoadNameForRoadnet></s:Body></s:Envelope>`;
+
+      //ANDREW HEIGHT SPL
+      roadNames = removeSpaces(roadNames);
+
+      var XMLRequest = getDataFromWCFService({
+        XMLRequestString,
+        SOAPAction: "GetRoadNameForRoadnet",
+      });
+
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          let suggestions = [];
+
+          suggestions = xmlParser(XMLString, "a:string");
+
+          if (suggestions.length > 15) suggestions.length = 15;
+          autocomplete(inp, suggestions);
+        } else {
+          console.log("err!", this.response); // user not found
+        }
+      };
     }
 
     function autocomplete(inp, arr) {
