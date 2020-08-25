@@ -684,9 +684,9 @@ define([
           break;
 
         case "GetExtentByOwner":
-          let firstName = inp.value;
-          let lastName = inp.value;
-          GetExtentByOwner_autoComplete(firstName, lastName);
+          let name = inp.id;
+          let val = inp.value;
+          GetExtentByOwner_autoComplete(inp, name, val);
           break;
 
         case "GetExtentByRoll": //done
@@ -704,14 +704,14 @@ define([
       }
     }
 
-    function GetExtentByIntersection_autoComplete(inp, road) {
-      road = removeSpaces(road);
+    function GetExtentByIntersection_autoComplete(inp, road, val) {
+      val = removeSpaces(val);
       let XMLRequestString = "";
       let XMLRequest = "";
-      
+
       switch (road) {
         case "firstRoad":
-          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetFirstRoad xmlns="http://tempuri.org/"><roadName>${firstRoad}</roadName></GetFirstRoad></s:Body></s:Envelope>`;
+          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetFirstRoad xmlns="http://tempuri.org/"><roadName>${val}</roadName></GetFirstRoad></s:Body></s:Envelope>`;
 
           XMLRequest = getDataFromWCFService({
             XMLRequestString,
@@ -720,7 +720,7 @@ define([
           break;
 
         case "secondRoad":
-          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetSecondRoad xmlns="http://tempuri.org/"><roadName>${secondRoad}</roadName><secondRoadName>s</secondRoadName></GetSecondRoad></s:Body></s:Envelope>`;
+          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetSecondRoad xmlns="http://tempuri.org/"><roadName>${val}</roadName><secondRoadName>s</secondRoadName></GetSecondRoad></s:Body></s:Envelope>`;
 
           XMLRequest = getDataFromWCFService({
             XMLRequestString,
@@ -755,12 +755,47 @@ define([
       //put in array
       return suggestions;
     }
-    function GetExtentByOwner_autoComplete(firstName, lastName) {
-      let suggestions = [];
-      //req str
-      //get res
-      //put in array
-      return suggestions;
+
+    function GetExtentByOwner_autoComplete(inp, name, val) {
+      val = removeSpaces(val);
+      let XMLRequestString = "";
+      let XMLRequest = "";
+
+      switch (name) {
+        case "firstName":
+          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetOwerName xmlns="http://tempuri.org/"><name>${val}</name><firstOrNot>true</firstOrNot></GetOwerName></s:Body></s:Envelope>`;
+
+          XMLRequest = getDataFromWCFService({
+            XMLRequestString,
+            SOAPAction: "GetOwerName",
+          });
+          break;
+
+        case "lastName":
+          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetOwerName xmlns="http://tempuri.org/"><name>${val}</name><firstOrNot>false</firstOrNot></GetOwerName></s:Body></s:Envelope>`;
+
+          XMLRequest = getDataFromWCFService({
+            XMLRequestString,
+            SOAPAction: "GetOwerName",
+          });
+          break;
+
+        default:
+          break;
+      }
+
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          let suggestions = xmlParser(XMLString, "a:string");
+
+          if (suggestions.length > 15) suggestions.length = 15;
+          autocomplete(inp, suggestions);
+        } else {
+          console.log("err!", this.response); // user not found
+        }
+      };
     }
 
     function GetExtentByRoll_autoComplete(inp, rollNo) {
