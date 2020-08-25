@@ -172,8 +172,8 @@ define([
 
     function GetExtentByIntersection(firstRoad, secondRoad) {
       //DEWITTSPOND PANORAMARD
-      firstRoad = removeSpaces(firstRoad).toUpperCase();
-      secondRoad = removeSpaces(secondRoad).toUpperCase();
+      firstRoad = removeSpaces(firstRoad).toUpperCase() || '';
+      secondRoad = removeSpaces(secondRoad).toUpperCase() || '';
 
       var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentByIntersection xmlns="http://tempuri.org/"><firstRoad>${firstRoad}</firstRoad><secondRoad>${secondRoad}</secondRoad></GetExtentByIntersection></s:Body></s:Envelope>`;
       console.log("Req:", XMLRequestString);
@@ -254,6 +254,9 @@ define([
     function GetExtentByMunAddress(houseNum, roadName) {
       // <houseNum>262075</houseNum>
       // <roadName>ROCKY VIEW POINT</roadName>
+      if (!houseNum.length) houseNum = "";
+      if (!roadName.length) roadName = "";
+
       var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentByMunAddress xmlns="http://tempuri.org/"><houseNum>${houseNum}</houseNum><roadName>${roadName}</roadName></GetExtentByMunAddress></s:Body></s:Envelope>`;
 
       var XMLRequest = getDataFromWCFService({
@@ -270,12 +273,18 @@ define([
 
           // var Address =xmlDoc.getElementsByTagName("a:Address")[0].childNodes[0].nodeValue;
           // var ID =xmlDoc.getElementsByTagName("a:ID")[0].childNodes[0].nodeValue;
-          var xCoord = parseFloat(
-            xmlDoc.getElementsByTagName("a:decX")[0].childNodes[0].nodeValue
-          );
-          var yCoord = parseFloat(
-            xmlDoc.getElementsByTagName("a:decY")[0].childNodes[0].nodeValue
-          );
+          let xCoord, yCoord;
+
+          if (xmlDoc.getElementsByTagName("a:decX").length) {
+            xCoord = parseFloat(
+              xmlDoc.getElementsByTagName("a:decX")[0].childNodes[0].nodeValue
+            );
+          }
+          if (xmlDoc.getElementsByTagName("a:decY").length) {
+            yCoord = parseFloat(
+              xmlDoc.getElementsByTagName("a:decY")[0].childNodes[0].nodeValue
+            );
+          }
 
           if (!isValidCoordinates([xCoord, yCoord])) {
             console.log("The returned result is invalid.");
@@ -301,8 +310,8 @@ define([
       };
     }
     function GetExtentByOwner(firstName, lastName) {
-      firstName = removeSpaces(firstName).toUpperCase();
-      lastName = removeSpaces(lastName).toUpperCase();
+      firstName = removeSpaces(firstName).toUpperCase() || "";
+      lastName = removeSpaces(lastName).toUpperCase() || "";
 
       var XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetExtentByOwner xmlns="http://tempuri.org/"><Owner>${lastName},%${firstName}</Owner></GetExtentByOwner></s:Body></s:Envelope>`;
       console.log("Req:", XMLRequestString);
@@ -318,13 +327,19 @@ define([
           let XMLString = this.response;
           var parser = new DOMParser();
           let xmlDoc = parser.parseFromString(XMLString, "text/xml");
+          let xCoord, yCoord;
 
-          var xCoord = parseFloat(
-            xmlDoc.getElementsByTagName("a:DecX")[0].childNodes[0].nodeValue
-          );
-          var yCoord = parseFloat(
-            xmlDoc.getElementsByTagName("a:DecY")[0].childNodes[0].nodeValue
-          );
+          if (xmlDoc.getElementsByTagName("a:DecX").length) {
+            xCoord = parseFloat(
+              xmlDoc.getElementsByTagName("a:DecX")[0].childNodes[0].nodeValue
+            );
+          }
+
+          if (xmlDoc.getElementsByTagName("a:DecY").length) {
+            yCoord = parseFloat(
+              xmlDoc.getElementsByTagName("a:DecY")[0].childNodes[0].nodeValue
+            );
+          }
           // xmlDoc.getElementsByTagName("a:Owner")[0].childNodes[0].nodeValue;
           // xmlDoc.getElementsByTagName("a:OwnershipType")[0].childNodes[0].nodeValue;
           // xmlDoc.getElementsByTagName("a:Roll")[0].childNodes[0].nodeValue;
@@ -525,7 +540,44 @@ define([
       let Quarter = ["NE", "NW", "SE", "SW"];
       let TWP = ["21", "22", "23", "24", "25", "26", "27", "28"];
       let Rge = ["25", "26", "27", "28", "29", "1", "2", "3", "4", "5"];
-      let Section = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"]; //eslint-disabled-line
+      let Section = [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+      ]; //eslint-disabled-line
 
       autocomplete(document.getElementById("Quarter"), Quarter);
       autocomplete(document.getElementById("TWP"), TWP);
@@ -617,11 +669,12 @@ define([
       let inp = inputElement;
       let searchBox = inputElement.dataset.searchbox;
       let query = inputElement.value;
+      let val = 0;
 
       switch (searchBox) {
         case "GetExtentByIntersection":
           let road = inp.id; //firstRoad or secondRoad
-          let val = inp.value;
+          val = inp.value;
           GetExtentByIntersection_autoComplete(inp, road, val);
           break;
 
@@ -638,7 +691,7 @@ define([
 
         case "GetExtentByOwner":
           let name = inp.id;
-          let val = inp.value;
+          val = inp.value;
           GetExtentByOwner_autoComplete(inp, name, val);
           break;
 
