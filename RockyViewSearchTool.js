@@ -625,8 +625,8 @@ define([
           Address</button>
         <div class="content">
           <div class="searchInputDiv autocomplete">
-            <label for="House">House No.</label>
-            <input data-searchbox="GetExtentByMunAddress" class="input-field" type="text" id="House" name="House" placeholder="">
+            <label for="houseNum">House No.</label>
+            <input data-searchbox="GetExtentByMunAddress" class="input-field" type="text" id="houseNum" name="House" placeholder="">
           </div>
           <div class="searchInputDiv autocomplete">
             <label for="RoadName">Road Name</label>
@@ -671,16 +671,16 @@ define([
           GetExtentByIntersection_autoComplete(inp, road, val);
           break;
 
-        case "GetExtentByLegal": //done
+        case "GetExtentByLegal":
           // let legal = query.split(" ").join("-").toUpperCase();
           //handled in initialization, case written for completeness
           GetExtentByLegal_autoComplete();
           break;
 
         case "GetExtentByMunAddress":
-          let houseNum = inp.value;
+          if (inp.id === "houseNum") return;
           let roadName = inp.value;
-          GetExtentByMunAddress_autoComplete(houseNum, roadName);
+          GetExtentByMunAddress_autoComplete(inp, roadName);
           break;
 
         case "GetExtentByOwner":
@@ -689,12 +689,12 @@ define([
           GetExtentByOwner_autoComplete(inp, name, val);
           break;
 
-        case "GetExtentByRoll": //done
+        case "GetExtentByRoll":
           let rollNo = inp.value;
           arr = GetExtentByRoll_autoComplete(inp, rollNo) || [];
           break;
 
-        case "GetExtentRoadNames": //done
+        case "GetExtentRoadNames":
           let roadNames = query;
           GetExtentRoadNames_autoComplete(inp, roadNames);
           break;
@@ -748,12 +748,29 @@ define([
     function GetExtentByLegal_autoComplete() {
       //written for completeness, already handled in initilization because of static values
     }
-    function GetExtentByMunAddress_autoComplete(houseNum, roadName) {
-      let suggestions = [];
-      //req str
-      //get res
-      //put in array
-      return suggestions;
+
+    function GetExtentByMunAddress_autoComplete(inp, roadName) {
+      roadName = removeSpaces(roadName);
+
+      let XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetRoadNameForMunAddress xmlns="http://tempuri.org/"><roadName>${roadName}</roadName></GetRoadNameForMunAddress></s:Body></s:Envelope>`;
+
+      let XMLRequest = getDataFromWCFService({
+        XMLRequestString,
+        SOAPAction: "GetRoadNameForMunAddress",
+      });
+
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          let suggestions = xmlParser(XMLString, "a:string");
+
+          if (suggestions.length > 15) suggestions.length = 15;
+          autocomplete(inp, suggestions);
+        } else {
+          console.log("err!", this.response); // user not found
+        }
+      };
     }
 
     function GetExtentByOwner_autoComplete(inp, name, val) {
