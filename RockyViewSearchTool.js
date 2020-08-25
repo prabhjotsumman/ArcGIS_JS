@@ -525,7 +525,7 @@ define([
       let Quarter = ["NE", "NW", "SE", "SW"];
       let TWP = ["21", "22", "23", "24", "25", "26", "27", "28"];
       let Rge = ["25", "26", "27", "28", "29", "1", "2", "3", "4", "5"];
-      let Section = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"];
+      let Section = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"]; //eslint-disabled-line
 
       autocomplete(document.getElementById("Quarter"), Quarter);
       autocomplete(document.getElementById("TWP"), TWP);
@@ -808,7 +808,7 @@ define([
         if (this.readyState == 4 && this.status == 200) {
           console.log("DATA:", this.response);
           let XMLString = this.response;
-          let suggestions = = xmlParser(XMLString, "a:string");
+          let suggestions = xmlParser(XMLString, "a:string");
 
           if (suggestions.length > 15) suggestions.length = 15;
           autocomplete(inp, suggestions);
