@@ -533,9 +533,46 @@ define([
 
     function initiateAutoComplete() {
       let Quarter = ["NE", "NW", "SE", "SW"];
-      let Section = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"];
-      let TWP = ["21","22","23","24","25","26","27","28"];
-      let Rge = ["25","26","27","28","29","1","2","3","4","5"];
+      let Section = [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+      ];
+      let TWP = ["21", "22", "23", "24", "25", "26", "27", "28"];
+      let Rge = ["25", "26", "27", "28", "29", "1", "2", "3", "4", "5"];
       autocomplete(document.getElementById("Quarter"), Quarter);
       autocomplete(document.getElementById("Section"), Section);
       autocomplete(document.getElementById("TWP"), TWP);
@@ -629,9 +666,9 @@ define([
 
       switch (searchBox) {
         case "GetExtentByIntersection":
-          let firstRoad = inp.value;
-          let secondRoad = inp.value;
-          GetExtentByIntersection_autoComplete(firstRoad, secondRoad);
+          let road = inp.id; //firstRoad or secondRoad
+          let val = inp.value;
+          GetExtentByIntersection_autoComplete(inp, road, val);
           break;
 
         case "GetExtentByLegal": //done
@@ -667,12 +704,46 @@ define([
       }
     }
 
-    function GetExtentByIntersection_autoComplete(firstRoad, secondRoad) {
-      let suggestions = [];
-      //req str
-      //get res
-      //put in array
-      return suggestions;
+    function GetExtentByIntersection_autoComplete(inp, road) {
+      road = removeSpaces(road);
+      let XMLRequestString = "";
+      let XMLRequest = "";
+      
+      switch (road) {
+        case "firstRoad":
+          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetFirstRoad xmlns="http://tempuri.org/"><roadName>${firstRoad}</roadName></GetFirstRoad></s:Body></s:Envelope>`;
+
+          XMLRequest = getDataFromWCFService({
+            XMLRequestString,
+            SOAPAction: "GetFirstRoad",
+          });
+          break;
+
+        case "secondRoad":
+          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetSecondRoad xmlns="http://tempuri.org/"><roadName>${secondRoad}</roadName><secondRoadName>s</secondRoadName></GetSecondRoad></s:Body></s:Envelope>`;
+
+          XMLRequest = getDataFromWCFService({
+            XMLRequestString,
+            SOAPAction: "GetSecondRoad",
+          });
+          break;
+
+        default:
+          break;
+      }
+
+      XMLRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("DATA:", this.response);
+          let XMLString = this.response;
+          let suggestions = xmlParser(XMLString, "a:string");
+
+          if (suggestions.length > 15) suggestions.length = 15;
+          autocomplete(inp, suggestions);
+        } else {
+          console.log("err!", this.response); // user not found
+        }
+      };
     }
     function GetExtentByLegal_autoComplete() {
       //written for completeness, already handled in initilization because of static values
