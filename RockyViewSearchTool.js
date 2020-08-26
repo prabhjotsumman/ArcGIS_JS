@@ -711,7 +711,7 @@ define([
     }
 
     function GetExtentByIntersection_autoComplete(inp, road, val) {
-      val = removeSpaces(val);
+      val = removeSpaces(val) || "";
       let XMLRequestString = "";
       let XMLRequest = "";
 
@@ -726,7 +726,9 @@ define([
           break;
 
         case "secondRoad":
-          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetSecondRoad xmlns="http://tempuri.org/"><roadName>${val}</roadName><secondRoadName>s</secondRoadName></GetSecondRoad></s:Body></s:Envelope>`;
+          let firstRoadName = document.getElementById("firstRoad").value;
+          firstRoadName = removeSpaces(firstRoadName) || "";
+          XMLRequestString = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><GetSecondRoad xmlns="http://tempuri.org/"><roadName>${firstRoadName}</roadName><secondRoadName>${val}</secondRoadName></GetSecondRoad></s:Body></s:Envelope>`;
 
           XMLRequest = getDataFromWCFService({
             XMLRequestString,
