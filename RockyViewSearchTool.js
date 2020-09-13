@@ -408,6 +408,11 @@ define([
           );
           console.log(extent);
           zoomTo(extent);
+          let point = {
+            x: xCoord,
+            y: yCoord,
+          };
+          addSymbolDeffered(point);
         } else {
           console.log("err!", this.response); // user not found
         }
@@ -460,6 +465,11 @@ define([
           console.log("Extent:", extent);
           console.log("Mymap:", mymap);
           zoomTo(extent);
+          let point = {
+            x: (xCoordLeft + xCoordRight)/2,
+            y: (yCoordLeft + yCoordRight)/2,
+          };
+          addSymbolDeffered(point);
         } else {
           console.log("err!"); // user not found
         }
@@ -746,7 +756,7 @@ define([
           let XMLString = this.response;
           let suggestions = xmlParser(XMLString, "a:string");
 
-          if (suggestions.length > 15) suggestions.length = 15;
+          if (suggestions.length > 20) suggestions.length = 20;
           autocomplete(inp, suggestions);
         } else {
           console.log("err!", this.response); // user not found
