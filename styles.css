@@ -92,13 +92,13 @@ body {
 }
 
 #openSearchWidgetDiv {
-      right: 2%;
-    position: absolute;
-    background-color: #ffffff;
-    top: 15%;
-    border-radius: 30px;
-    padding: 16px;
-    box-shadow: 2px 2px 3px;
+  right: 2%;
+  position: absolute;
+  background-color: #ffffff;
+  top: 15%;
+  border-radius: 30px;
+  padding: 16px;
+  box-shadow: 2px 2px 3px;
 }
 .search-icon {
   font-size: 16px;
@@ -132,4 +132,26 @@ body {
 .btn-close {
   /* display: inline-block; */
   float: right;
+}
+
+#alert {
+  padding: 22px;
+  font-size: 18px;
+  background-color: #dadada;
+  color: black;
+  border-top: 4px solid black;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
+  position: absolute;
+}
+
+.closebtn {
+  margin-left: 15px;
+  color: black;
+  font-weight: bold;
+  float: right;
+  font-size: 24px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
 }

@@ -194,9 +194,10 @@ define([
 
           if (!isValidCoordinates([xCoord, yCoord])) {
             console.log("The returned result is invalid.");
+            document.getElementById("alertDialog").style.display = 'block';
             return;
           }
-
+          document.getElementById("alertDialog").style.display = 'none';
           var extent = new Extent(
             xCoord - 150,
             yCoord - 50,
@@ -235,8 +236,10 @@ define([
           console.log([xCoord, yCoord]);
           if (!isValidCoordinates([xCoord, yCoord])) {
             console.log("The returned result is invalid.");
+            document.getElementById("alertDialog").style.display = 'block';
             return;
           }
+          document.getElementById("alertDialog").style.display = 'none';
           var extent = new Extent(
             xCoord - 1600,
             yCoord - 1600,
@@ -288,8 +291,10 @@ define([
 
           if (!isValidCoordinates([xCoord, yCoord])) {
             console.log("The returned result is invalid.");
+            document.getElementById("alertDialog").style.display = 'block';
             return;
           }
+          document.getElementById("alertDialog").style.display = 'none';
 
           var extent = new Extent(
             xCoord - 120,
@@ -346,8 +351,10 @@ define([
           console.log([xCoord, yCoord]);
           if (!isValidCoordinates([xCoord, yCoord])) {
             console.log("The returned result is invalid.");
+            document.getElementById("alertDialog").style.display = 'block';
             return;
           }
+          document.getElementById("alertDialog").style.display = 'none';
           var extent = new Extent(
             xCoord - 150,
             yCoord - 50,
@@ -397,8 +404,10 @@ define([
           console.log([xCoord, yCoord]);
           if (!isValidCoordinates([xCoord, yCoord])) {
             console.log("The returned result is invalid.");
+            document.getElementById("alertDialog").style.display = 'block';
             return;
           }
+          document.getElementById("alertDialog").style.display = 'none';
           var extent = new Extent(
             xCoord - 160,
             yCoord - 100,
@@ -452,8 +461,10 @@ define([
             ])
           ) {
             console.log("The returned result is invalid.");
+            document.getElementById("alertDialog").style.display = 'block';
             return;
           }
+          document.getElementById("alertDialog").style.display = 'none';
 
           var extent = new Extent(
             xCoordLeft,
@@ -671,6 +682,10 @@ define([
           <button class="btn-search" id="searchButton" role="submit" type="submit">Search</button>
         </div>
       </form>
+      <div class="alert" id="alertDialog">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong>Alert!</strong> No result by your input.
+      </div>
     </div>
   </div>`;
     }
