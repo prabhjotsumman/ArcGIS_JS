@@ -135,6 +135,7 @@ body {
 }
 
 #alertDialog {
+  display: none;
   padding: 22px;
   font-size: 18px;
   background-color: #dadada;
